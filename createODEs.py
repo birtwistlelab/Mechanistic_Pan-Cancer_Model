@@ -1,8 +1,13 @@
 import numpy as np
 import sys
-from RunPrep import *
+# from RunPrep import *
+import csv
+
+from numba import jit
 
 
+
+@jit(nopython=True)
 def createODEs(x,t,data,extra):
 
     # returns [ydot,flag,newdata,v]
@@ -2075,6 +2080,11 @@ def createODEs(x,t,data,extra):
     return to_return
 
 
+
+
+
+
+
     # # NOTE - everything after this point is just for debugging
     #
     # v_list = []
@@ -2104,9 +2114,9 @@ def createODEs(x,t,data,extra):
     # problem_indices = []
     #
     # accurate = 0
-    #
-    # # NOTE - ydot debug
-    #
+    # #
+    # # # NOTE - ydot debug
+    # #
     # for i in range(len(to_return)):
     #     if abs(to_return[i] - correct_ydot[i]) < 0.0000000001:
     #         accurate = accurate+1
@@ -2137,12 +2147,12 @@ def createODEs(x,t,data,extra):
     # #
     # # print()
     # #
-    # # print(accurate/len(to_return))
-
-    # #
+    # print(accurate/len(to_return))
+    #
+    # # #
     # print(accurate/774)
-    # #
+    # # #
     # print("number wrong: " + str(774-accurate))
-    # #
-    # # print()
+    # # #
+    # # # print()
     # print(problem_indices)

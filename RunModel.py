@@ -8,12 +8,17 @@ from scipy.integrate import odeint
 from scipy.integrate import ode
 from createODEs import *
 
+from numba import jit
+
+# from skel_createODEs import skel_createODEs
+
+
 import time
 start_time = time.time()
 
 
 
-def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs):
+def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watch = []):
     # going to return [tout_all,xoutG_all,xoutS_all]
 
 
@@ -188,6 +193,8 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs):
     if np.any(STIM):
 
         xoutS[0,STIM.astype(bool)] = STIM[STIM.astype(bool)]
+
+        # TODO - not sure if this is working
         # this only runs if STIM has nonzero values
 
 
@@ -232,6 +239,7 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs):
 
 
     for i in range(1,int(N_STEPS)+1):
+
         # gm
         [xginN,xgacN,AllGenesVecN,xmN,vTC] = gm(flagD,dataG,ts,xoutG,xoutS);
 
@@ -245,19 +253,6 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs):
         dataS.mMod=xmN*(1E9/(Vc*6.023E+23)); #convert mRNAs from mpc to nM
         dataG.AllGenesVec=AllGenesVecN;
 
-
-    #     %CVODEs PARCDL
-        # TODO need to definitely get tout
-        # CVodeSet('UserData',dataS);
-        # [status,tout,xoutS] = CVode(ts_up,'Normal');
-
-
-
-    #     %collect data
-    #     tout_all(i+1)=tout;
-
-        # tout_all[i] = tout
-        # TODO
 
 
 
@@ -278,58 +273,44 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs):
 
 
 
-    # %     %ODE15s
-            # TODO
-    # %     [tout,xoutS]=ode15s(@createODEs,[ts_up-ts ts_up],xoutS_all(i,:),optionsode15s,dataS);
 
+        # NOTE - testing purposes, comment out
+        # createODEs(xoutS_all[i,:],ts_up,dataS,0)
+        # sys.exit()
 
-
-        t = [ts_up-ts, ts_up]
 
 
         #NOTE odeint attempt
-        xoutS = odeint(createODEs, xoutS_all[i,:],[ts_up-ts, ts_up], args=(dataS,0))
-        print("xoutS")
-        print(xoutS)
-        print("xoutS end")
-        print(i)
-        print("--- %s seconds ---" % (time.time() - start_time))
+        # xoutS = odeint(createODEs, xoutS_all[i,:],[ts_up-ts, ts_up], args=(dataS,0))
+        xoutS = odeint(createODEs, xoutS_all[i,:],ts_up, args=(dataS,0))
+
+
+
+
+
+        try:
+            print(xoutS[0,inds_to_watch])
+        except:
+            print(xoutS)
+
+
+
+
         print(i/N_STEPS)
         print()
 
 
 
 
-
-        # NOTE -  something to go off of, from last project
-        # [T,Y0] = ode15s(@feedforwardloops,0:.1:10, [0 0 0],options,[1 1 1],[i j k l]);
-        #  Y0 = np.matrix(odeint(feedforwardloops, [0,0,0], t, args=([1,1,1],[i,j,k,l])))
-
-
-
-
-
-
-
-    # %     tout_all(i+1)=tout(end);
-            # TODO - get tout
-
         xoutG_all[i,:] = np.matrix.transpose(xoutG);
 
         xoutS_all[i,:] = xoutS[xoutS.shape[0]-1,:]
-    # %     xoutS_all(i+1,:)=xoutS(end,:);
 
 
 
         ts_up = ts_up + ts
-    #
-    #     if rem(i,1000)==0; disp(strcat(num2str(i),'...')); end
-
-        # TODO - no idea what rem is
-        # if rem[i,999] == 0:
-        #     print(str(i) + "...")
-    #
-    # end
 
 
-    print("done with ODE")
+
+    print("ODEs done")
+    print("--- %s seconds ---" % (time.time() - start_time))
