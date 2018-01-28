@@ -3,24 +3,41 @@ import sys
 # from RunPrep import *
 import csv
 
-from numba import jit
+from numba import jit, njit
+
+from scipy.integrate import odeint
 
 
-
-@jit(nopython=True)
-def createODEs(x,t,data,extra):
+# @jit(nopython=True)
+def createODEs(x,t,data0,data1,data2,data3,data4,data5,data6):
 
     # returns [ydot,flag,newdata,v]
 
+    # data = RunPrep()[0]
+
+
 
     # # unpacking
-    kS=data.kS;
-    VvPARCDL=data.VvPARCDL;
-    VxPARCDL=data.VxPARCDL;
-    S_PARCDL=data.S_PARCDL;
-    mExp_nM=data.mExp_nM;
-    mMod=data.mMod;
-    flagE=data.flagE;
+    # kS=data.kS;
+    # VvPARCDL=data.VvPARCDL;
+    # VxPARCDL=data.VxPARCDL;
+    # S_PARCDL=data.S_PARCDL;
+    # mExp_nM=data.mExp_nM;
+    # mMod=data.mMod;
+    # flagE=data.flagE;
+
+
+
+
+
+    # NOTE
+    kS=data0;
+    VvPARCDL=data1;
+    VxPARCDL=data2;
+    S_PARCDL=data3;
+    mExp_nM=data4;
+    mMod=data5;
+    flagE=data6;
 
 
     # k
@@ -374,8 +391,44 @@ def createODEs(x,t,data,extra):
     pSCDint = xRP[a:a+29]; a=a+33;#[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint,pIIrIIrint];
 
 
-    pSCD_bind = np.append(xRP[0:25],xRP[29:33]); #[pEE1E2,pEE1Ev3,pEE1E1,pEE1EE1,pEE1E3,pEE1HE3,pEE1E4,pEE1HE4,pE2HE3,pHE3Ev3,pE1HE3,pHE3E4,pHE3HE4,pE2HE4,pHE4Ev3,pE1HE4,pE3HE4,pHE4E4,pHE4HE4,pHGF_Met_Met,pHGF_Met_HGF_Met,pPPrPPr,pPPrPr,pFFrFFr,pFFrFr,pIIrIr_IRS,pIIrIIr_IRS]; #Same as pSCD but with the IRS on the IGF1R. Had to do this because it has an extra step (binding of IRS)
-    pSCDint_bind = np.append(xRP[91:116],xRP[120:124]); #[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint_IRS,pIIrIIrint_IRS];
+    # pSCD_bind = np.append(xRP[0:25],xRP[29:33]); #[pEE1E2,pEE1Ev3,pEE1E1,pEE1EE1,pEE1E3,pEE1HE3,pEE1E4,pEE1HE4,pE2HE3,pHE3Ev3,pE1HE3,pHE3E4,pHE3HE4,pE2HE4,pHE4Ev3,pE1HE4,pE3HE4,pHE4E4,pHE4HE4,pHGF_Met_Met,pHGF_Met_HGF_Met,pPPrPPr,pPPrPr,pFFrFFr,pFFrFr,pIIrIr_IRS,pIIrIIr_IRS]; #Same as pSCD but with the IRS on the IGF1R. Had to do this because it has an extra step (binding of IRS)
+
+
+
+    # NOTE
+    # trying to fix append problem
+    array1 = xRP[0:25]
+    array2 = xRP[29:33]
+    pSCD_bind = np.zeros(shape=(array1.shape[0]+array2.shape[0]))
+
+    count = 0
+
+    for itema in array1:
+        pSCD_bind[count] = itema
+        count = count+1
+
+    for itema in array2:
+        pSCD_bind[count] = itema
+        count = count+1
+
+
+    # pSCDint_bind = np.append(xRP[91:116],xRP[120:124]); #[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint_IRS,pIIrIIrint_IRS];
+
+    array3 = xRP[91:116]
+    array4 = xRP[120:124]
+    pSCDint_bind = np.zeros(shape=(array3.shape[0]+array4.shape[0]))
+
+    count = 0
+
+    for itemy in array3:
+        pSCDint_bind[count] = itemy
+        count = count+1
+
+    for itemz in array4:
+        pSCDint_bind[count] = itemz
+        count = count+1
+
+    ##########
 
 
 
@@ -842,15 +895,17 @@ def createODEs(x,t,data,extra):
 
 
 
-
+    # NOTE
     vE = np.zeros(shape=(5))
-    vE[0]=kT1*EIF4E*mT;
-    vE[1]=kT2*EIF4E_mT;
+    vE[0]=kT1[0]*EIF4E*mT;
+
+    vE[1]=kT2[0]*EIF4E_mT;
+
     vE[2]=ksynth_mT;
     vE[3]=kdeg_mT*mT;
     vE[4]=kdeg_EIF4E_mT*EIF4E_mT;
 
-
+    #########
 
 
     # ## vRIBOSOME **
@@ -863,27 +918,29 @@ def createODEs(x,t,data,extra):
 
 
     # # # DNA Damage Mods
-    kTL[0]=bp/mExp_nM[0]*rhs;
-    kTL[1]=(bmi+bm*Mdm2pro)/mExp_nM[1]*rhs;
-    kTL[2]=(bw*Wip1pro)/mExp_nM[2]*rhs;
+    # NOTE
+    kTL[0]=bp/mExp_nM[0]*rhs[0];
+    kTL[1]=(bmi+bm*Mdm2pro)/mExp_nM[1]*rhs[0];
+    kTL[2]=(bw*Wip1pro)/mExp_nM[2]*rhs[0];
 
 
 
     # # Cell Cycle Mods
-    kTL[5]=vsprb/mExp_nM[5]*rhs*eps;
-    kTL[6:9]=vse2f/sum(mExp_nM[6:9])*rhs*eps;
-    kTL[9:12]=(kcd1+kcd2*E2F*(Ki7/(Ki7+pRB))*(Ki8/(Ki8+pRBp)))/sum(mExp_nM[9:12])*rhs*eps;
-    kTL[12:14]=kce*E2F*(Ki9/(Ki9+pRB))*(Ki10/(Ki10+pRBp))/sum(mExp_nM[12:14])*rhs*eps;
-    kTL[14]=vsskp2/mExp_nM[14]*rhs*eps;
-    kTL[15]=vspei/mExp_nM[15]*rhs*eps;
-    kTL[16]=vspai/mExp_nM[16]*rhs*eps;
-    kTL[17]=vspbi/mExp_nM[17]*rhs*eps;
-    kTL[18]=kca*E2F*(Ki11/(Ki11+pRB))*(Ki12/(Ki12+pRBp))/mExp_nM[18]*rhs*eps;
-    kTL[19]=(vs1p27+(vs2p27*E2F*(Ki13/(Ki13+pRB))*(Ki14/(Ki14+pRBp))))/mExp_nM[19]*rhs*eps;
-    kTL[20]=vscdh1a/mExp_nM[20]*rhs*eps;
-    kTL[21]=vcb/mExp_nM[21]*rhs*eps;
-    kTL[22]=vscdc20i/mExp_nM[22]*rhs*eps;
-    kTL[23]=vswee1/mExp_nM[23]*rhs*eps;
+    # NOTE
+    kTL[5]=vsprb/mExp_nM[5]*rhs[0]*eps;
+    kTL[6:9]=vse2f/np.sum(mExp_nM[6:9])*rhs[0]*eps;
+    kTL[9:12]=(kcd1+kcd2*E2F*(Ki7/(Ki7+pRB))*(Ki8/(Ki8+pRBp)))/np.sum(mExp_nM[9:12])*rhs[0]*eps;
+    kTL[12:14]=kce*E2F*(Ki9/(Ki9+pRB))*(Ki10/(Ki10+pRBp))/np.sum(mExp_nM[12:14])*rhs[0]*eps;
+    kTL[14]=vsskp2/mExp_nM[14]*rhs[0]*eps;
+    kTL[15]=vspei/mExp_nM[15]*rhs[0]*eps;
+    kTL[16]=vspai/mExp_nM[16]*rhs[0]*eps;
+    kTL[17]=vspbi/mExp_nM[17]*rhs[0]*eps;
+    kTL[18]=kca*E2F*(Ki11/(Ki11+pRB))*(Ki12/(Ki12+pRBp))/mExp_nM[18]*rhs[0]*eps;
+    kTL[19]=(vs1p27+(vs2p27*E2F*(Ki13/(Ki13+pRB))*(Ki14/(Ki14+pRBp))))/mExp_nM[19]*rhs[0]*eps;
+    kTL[20]=vscdh1a/mExp_nM[20]*rhs[0]*eps;
+    kTL[21]=vcb/mExp_nM[21]*rhs[0]*eps;
+    kTL[22]=vscdc20i/mExp_nM[22]*rhs[0]*eps;
+    kTL[23]=vswee1/mExp_nM[23]*rhs[0]*eps;
 
 
     kTLcdk1tot=(cdk1tot/mExp_nM[26])*kTLd[26];
@@ -893,7 +950,10 @@ def createODEs(x,t,data,extra):
 
 
     avgktl=np.mean(kTLd[28:30]);
-    summExp=sum(mExp_nM[28:30]);
+
+    # NOTE
+    summExp=np.sum(mExp_nM[28:30]);
+
     kTLcdk4tot=(cdk4tot/summExp)*avgktl;
     cdk4tot=(kTLcdk4tot*summExp)/avgktl;
 
@@ -904,19 +964,30 @@ def createODEs(x,t,data,extra):
 
 
     # syntax for flattening stuff
-    mMod = np.squeeze(np.asarray(mMod))
+
+    # NOTE
+    mMod_new = np.zeros(shape=(141))
+    count = 0
+
+    for itemx in mMod[:,0]:
+        mMod_new[count] = itemx
+        count = count+1
+
 
 
     if flagE:
-        vTL=np.multiply(kTL,mMod)*(EIF4E/(k50E+EIF4E));
+        vTL=np.multiply(kTL,mMod_new)*(EIF4E/(k50E+EIF4E));
     else:
-        vTL=np.multiply(kTL,mMod)*(EIF4Efree/(k50E+EIF4Efree));
+
+        vTL= np.multiply(kTL,mMod_new) * (EIF4Efree/(k50E+EIF4Efree));
+
+
 
 
 
     # # Cell cycle proteins should not be affected by EIF4E, nor SGE.
-    vTL[5:9]=np.multiply(kTL[5:9],mMod[5:9])*(EIF4Efree/(k50E+EIF4Efree));
-    vTL[12:30]=np.multiply(kTL[12:30],mMod[12:30])*(EIF4Efree/(k50E+EIF4Efree));
+    vTL[5:9]=np.multiply(kTL[5:9],mMod_new[5:9])*(EIF4Efree/(k50E+EIF4Efree));
+    vTL[12:30]=np.multiply(kTL[12:30],mMod_new[12:30])*(EIF4Efree/(k50E+EIF4Efree));
 
 
 
@@ -1220,7 +1291,13 @@ def createODEs(x,t,data,extra):
 
     # ## vA **
     vA = np.zeros(shape=(87))
-    vA[1-1]=kA[1-1]*L*R *Vc/Ve;
+
+    # NOTE
+    vA[0]=kA[0]*L*R *Vc[0]/Ve[0];
+
+
+
+
     vA[2-1]=kA[2-1]*L_R;
     vA[3-1]=kA[3-1]*L_R;
     vA[4-1]=kA[4-1]*Ractive*flip;
@@ -1315,19 +1392,21 @@ def createODEs(x,t,data,extra):
 
     # ## vR **
     vR = np.zeros(shape=(158))
-    vR[1-1]=kR[1-1]*E1*E *Vc/Ve;
+    # NOTE
+    vR[1-1]=kR[1-1]*E1*E *Vc[0]/Ve[0];
+
     vR[2-1]=kR[2-1]*EE1 ;
     vR[3-1]=kR[3-1]*EE1*E2 ;
     vR[4-1]=kR[4-1]*EE1E2 ;
     vR[5-1]=kR[5-1]*EE1*E1 ;
     vR[6-1]=kR[6-1]*EE1E1 ;
-    vR[7-1]=kR[7-1]*EE1E1*E *Vc/Ve;
+    vR[7-1]=kR[7-1]*EE1E1*E *Vc[0]/Ve[0];
     vR[8-1]=2*kR[8-1]*EE1EE1 ;
     vR[9-1]=kR[9-1]*EE1EE1 ;
     vR[10-1]=kR[10-1]*EE1*EE1 ;
     vR[11-1]=kR[11-1]*EE1*E3 ;
     vR[12-1]=kR[12-1]*EE1E3 ;
-    vR[13-1]=kR[13-1]*EE1E3*H *Vc/Ve;
+    vR[13-1]=kR[13-1]*EE1E3*H *Vc[0]/Ve[0];
     vR[14-1]=kR[14-1]*EE1HE3 ;
     vR[15-1]=kR[15-1]*EE1HE3 ;
     vR[16-1]=kR[16-1]*EE1*HE3 ;
@@ -1335,21 +1414,21 @@ def createODEs(x,t,data,extra):
     vR[18-1]=kR[18-1]*EE1Ev3 ;
     vR[19-1]=kR[19-1]*EE1*E4 ;
     vR[20-1]=kR[20-1]*EE1E4 ;
-    vR[21-1]=kR[21-1]*EE1E4*H *Vc/Ve;
+    vR[21-1]=kR[21-1]*EE1E4*H *Vc[0]/Ve[0];
     vR[22-1]=kR[22-1]*EE1HE4 ;
     vR[23-1]=kR[23-1]*EE1HE4 ;
     vR[24-1]=kR[24-1]*EE1*HE4 ;
-    vR[25-1]=kR[25-1]*H*E3 *Vc/Ve;
+    vR[25-1]=kR[25-1]*H*E3 *Vc[0]/Ve[0];
     vR[26-1]=kR[26-1]*HE3 ;
     vR[27-1]=kR[27-1]*HE3*E2 ;
     vR[28-1]=kR[28-1]*E2HE3 ;
     vR[29-1]=kR[29-1]*HE3*E1 ;
     vR[30-1]=kR[30-1]*E1HE3 ;
-    vR[31-1]=kR[31-1]*E1HE3*E *Vc/Ve;
+    vR[31-1]=kR[31-1]*E1HE3*E *Vc[0]/Ve[0];
     vR[32-1]=kR[32-1]*EE1HE3 ;
     vR[33-1]=kR[33-1]*HE3*E3 ;
     vR[34-1]=kR[34-1]*HE3E3 ;
-    vR[35-1]=kR[35-1]*HE3E3*H *Vc/Ve;
+    vR[35-1]=kR[35-1]*HE3E3*H *Vc[0]/Ve[0];
     vR[36-1]=2*kR[36-1]*HE3HE3 ;
     vR[37-1]=kR[37-1]*HE3HE3 ;
     vR[38-1]=kR[38-1]*HE3*HE3 ;
@@ -1357,27 +1436,27 @@ def createODEs(x,t,data,extra):
     vR[40-1]=kR[40-1]*HE3Ev3 ;
     vR[41-1]=kR[41-1]*HE3*E4 ;
     vR[42-1]=kR[42-1]*HE3E4 ;
-    vR[43-1]=kR[43-1]*HE3E4*H *Vc/Ve;
+    vR[43-1]=kR[43-1]*HE3E4*H *Vc[0]/Ve[0];
     vR[44-1]=kR[44-1]*HE3HE4 ;
     vR[45-1]=kR[45-1]*HE3HE4 ;
     vR[46-1]=kR[46-1]*HE3*HE4 ;
-    vR[47-1]=kR[47-1]*H*E4 *Vc/Ve;
+    vR[47-1]=kR[47-1]*H*E4 *Vc[0]/Ve[0];
     vR[48-1]=kR[48-1]*HE4 ;
     vR[49-1]=kR[49-1]*HE4*E2 ;
     vR[50-1]=kR[50-1]*E2HE4 ;
     vR[51-1]=kR[51-1]*HE4*E1 ;
     vR[52-1]=kR[52-1]*E1HE4 ;
-    vR[53-1]=kR[53-1]*E1HE4*E *Vc/Ve;
+    vR[53-1]=kR[53-1]*E1HE4*E *Vc[0]/Ve[0];
     vR[54-1]=kR[54-1]*EE1HE4 ;
     vR[55-1]=kR[55-1]*HE4*E3 ;
     vR[56-1]=kR[56-1]*E3HE4 ;
-    vR[57-1]=kR[57-1]*E3HE4*H *Vc/Ve;
+    vR[57-1]=kR[57-1]*E3HE4*H *Vc[0]/Ve[0];
     vR[58-1]=kR[58-1]*HE3HE4 ;
     vR[59-1]=kR[59-1]*HE4*Ev3 ;
     vR[60-1]=kR[60-1]*HE4Ev3 ;
     vR[61-1]=kR[61-1]*HE4*E4 ;
     vR[62-1]=kR[62-1]*HE4E4 ;
-    vR[63-1]=kR[63-1]*HE4E4*H *Vc/Ve;
+    vR[63-1]=kR[63-1]*HE4E4*H *Vc[0]/Ve[0];
     vR[64-1]=2*kR[64-1]*HE4HE4 ;
     vR[65-1]=kR[65-1]*HE4HE4 ;
     vR[66-1]=kR[66-1]*HE4*HE4 ;
@@ -1387,26 +1466,26 @@ def createODEs(x,t,data,extra):
     vR[70-1]=kR[70-1]*pE2 ;
     vR[71-1]=kR[71-1]*E4*ppERK ;
     vR[72-1]=kR[72-1]*pE4 ;
-    vR[73-1]=kR[73-1]*Met*HGF *Vc/Ve;
+    vR[73-1]=kR[73-1]*Met*HGF *Vc[0]/Ve[0];
     vR[74-1]=kR[74-1]*HGF_Met ;
     vR[75-1]=kR[75-1]*HGF_Met*Met ;
     vR[76-1]=kR[76-1]*HGF_Met_Met ;
-    vR[77-1]=kR[77-1]*HGF_Met_Met*HGF *Vc/Ve;
+    vR[77-1]=kR[77-1]*HGF_Met_Met*HGF *Vc[0]/Ve[0];
     vR[78-1]=2*kR[78-1]*HGF_Met_HGF_Met ;
     vR[79-1]=kR[79-1]*HGF_Met_HGF_Met ;
     vR[80-1]=kR[80-1]*HGF_Met*HGF_Met ;
-    vR[81-1]=kR[81-1]*Pr*P *Vc/Ve;
+    vR[81-1]=kR[81-1]*Pr*P *Vc[0]/Ve[0];
     vR[82-1]=kR[82-1]*PPr ;
     vR[83-1]=kR[83-1]*PPr*PPr ;
     vR[84-1]=kR[84-1]*PPrPPr ;
     vR[85-1]=2*kR[85-1]*PPrPPr ;
     vR[86-1]=kR[86-1]*PPrPr ;
-    vR[87-1]=kR[87-1]*Fr*F *Vc/Ve;
+    vR[87-1]=kR[87-1]*Fr*F *Vc[0]/Ve[0];
     vR[88-1]=kR[88-1]*FFr;
     vR[89-1]=kR[89-1]*FFr*FFr;
     vR[90-1]=kR[90-1]*FFrFFr;
     vR[91-1]=2*kR[91-1]*FFrFFr;
-    vR[92-1]=kR[92-1]*F*FFrFr *Vc/Ve;
+    vR[92-1]=kR[92-1]*F*FFrFr *Vc[0]/Ve[0];
     vR[93-1]=kR[93-1]*FFrFr;
     vR[94-1]=kR[94-1]*Fr*FFr;
     vR[95-1]=kR[95-1]*Ir*Ir;
@@ -1437,25 +1516,25 @@ def createODEs(x,t,data,extra):
     vR[120-1]=kR[120-1]*E3E4;
     vR[121-1]=kR[121-1]*E4*E4;
     vR[122-1]=kR[122-1]*E4E4;
-    vR[123-1]=2*kR[123-1]*E*E1E1 *Vc/Ve;
+    vR[123-1]=2*kR[123-1]*E*E1E1 *Vc[0]/Ve[0];
     vR[124-1]=kR[124-1]*EE1E1;
-    vR[125-1]=kR[125-1]*E*E1E2 *Vc/Ve;
+    vR[125-1]=kR[125-1]*E*E1E2 *Vc[0]/Ve[0];
     vR[126-1]=kR[126-1]*EE1E2;
-    vR[127-1]=kR[127-1]*E*E1E3 *Vc/Ve;
+    vR[127-1]=kR[127-1]*E*E1E3 *Vc[0]/Ve[0];
     vR[128-1]=kR[128-1]*EE1E3;
-    vR[129-1]=kR[129-1]*H*E1E3 *Vc/Ve;
+    vR[129-1]=kR[129-1]*H*E1E3 *Vc[0]/Ve[0];
     vR[130-1]=kR[130-1]*E1HE3;
-    vR[131-1]=kR[131-1]*E*E1E4 *Vc/Ve;
+    vR[131-1]=kR[131-1]*E*E1E4 *Vc[0]/Ve[0];
     vR[132-1]=kR[132-1]*EE1E4;
-    vR[133-1]=kR[133-1]*H*E1E4 *Vc/Ve;
+    vR[133-1]=kR[133-1]*H*E1E4 *Vc[0]/Ve[0];
     vR[134-1]=kR[134-1]*E1HE4;
-    vR[135-1]=kR[135-1]*H*E2E3 *Vc/Ve;
+    vR[135-1]=kR[135-1]*H*E2E3 *Vc[0]/Ve[0];
     vR[136-1]=kR[136-1]*E2HE3;
-    vR[137-1]=kR[137-1]*H*E2E4 *Vc/Ve;
+    vR[137-1]=kR[137-1]*H*E2E4 *Vc[0]/Ve[0];
     vR[138-1]=kR[138-1]*E2HE4;
-    vR[139-1]=2*kR[139-1]*H*E3E4 *Vc/Ve;
+    vR[139-1]=2*kR[139-1]*H*E3E4 *Vc[0]/Ve[0];
     vR[140-1]=kR[140-1]*E3HE4;
-    vR[141-1]=2*kR[141-1]*H*E4E4 *Vc/Ve;
+    vR[141-1]=2*kR[141-1]*H*E4E4 *Vc[0]/Ve[0];
     vR[142-1]=kR[142-1]*HE4E4;
     vR[143-1]=kR[143-1]*Met*Met;
     vR[144-1]=kR[144-1]*Met_Met;
@@ -1465,13 +1544,13 @@ def createODEs(x,t,data,extra):
     vR[148-1]=kR[148-1]*FrFr;
     vR[149-1]=2*kR[149-1]*F*FrFr;
     vR[150-1]=kR[150-1]*FFrFr;
-    vR[151-1]=kR[151-1]*IrIr*I *Vc/Ve;
+    vR[151-1]=kR[151-1]*IrIr*I *Vc[0]/Ve[0];
     vR[152-1]=kR[152-1]*IIrIr;
-    vR[153-1]=kR[153-1]*IIrIr*I *Vc/Ve;
+    vR[153-1]=kR[153-1]*IIrIr*I *Vc[0]/Ve[0];
     vR[154-1]=kR[154-1]*IIrIrI;
-    vR[155-1]=kR[155-1]*Isr_Isr*IN *Vc/Ve;
+    vR[155-1]=kR[155-1]*Isr_Isr*IN *Vc[0]/Ve[0];
     vR[156-1]=kR[156-1]*IN_Isr_Isr;
-    vR[157-1]=kR[157-1]*IN_Isr_Isr*IN *Vc/Ve;
+    vR[157-1]=kR[157-1]*IN_Isr_Isr*IN *Vc[0]/Ve[0];
     vR[158-1]=kR[158-1]*IN_Isr_Isr_IN;
 
 
@@ -1548,7 +1627,9 @@ def createODEs(x,t,data,extra):
     vRP34[13]=np.multiply(kRP34[13],pIIrIrI_int_IRS);
     vRP34[14]=ps_IRS * np.multiply(np.multiply(np.multiply(fac,kRP34[14]),pIN_Isr_Isr_IN_int),IRS);
     vRP34[15]=np.multiply(kRP34[15],pIN_Isr_Isr_IN_int_IRS);
-    vRP34= np.matrix.transpose(vRP34)
+
+
+
 
 
 
@@ -1795,7 +1876,8 @@ def createODEs(x,t,data,extra):
 
 
     # ## vAd
-    Ads= np.matrix([L_R,
+    # NOTE
+    Ads= np.array([L_R,
     Ractive,
     Ractive_flip,
     Ractive_pC8,
@@ -1843,10 +1925,24 @@ def createODEs(x,t,data,extra):
     pBAD,
     ppERK_BAD]);
 
-    Ads = np.matrix.transpose(Ads)
 
 
-    Rds= np.matrix([pE1,
+    new = np.zeros(shape=(Ads.shape[0],1))
+
+    counter = 0
+    for itemb in Ads:
+        new[counter,0] = itemb
+        counter = counter + 1
+
+    Ads = new
+
+
+
+
+
+
+
+    Rds= np.array([pE1,
     pE2,
     pE4,
     E1E1,
@@ -1903,14 +1999,24 @@ def createODEs(x,t,data,extra):
     E2_ppERK,
     E4_ppERK]);
 
-    Rds = np.matrix.transpose(Rds)
+    new = np.zeros(shape=(Rds.shape[0],1))
+
+    counter = 0
+    for itemc in Rds:
+        new[counter,0] = itemc
+        counter = counter + 1
+
+    Rds = new
+
+
+
 
 
 
 
     RPds=xRP;
 
-    Pds= np.matrix([G2_SOS,
+    Pds= np.array([G2_SOS,
     G2_pSOS,
     PI3K1,
     pPI3K1,
@@ -2000,19 +2106,51 @@ def createODEs(x,t,data,extra):
     MEKi_ppMEK,
     AKTi_AKT]);
 
-    Pds = np.matrix.transpose(Pds)
+
+
+    new = np.zeros(shape=(Pds.shape[0],1))
+
+    counter = 0
+    for itemd in Pds:
+        new[counter,0] = itemd
+        counter = counter + 1
+
+    Pds = new
 
 
 
-    to_flatten = [Ads,Rds,RPds,Pds]
+
+
+
+    Xds = np.zeros(shape=(606))
+
+
+
+    count = 0
+
+    for itemea in Ads[:,0]:
+        Xds[count] = itemea
+        count = count + 1
+
+    for itemeb in Rds[:,0]:
+        Xds[count] = itemeb
+        count = count + 1
+
+    for itemec in RPds:
+        Xds[count] = itemec
+        count = count + 1
+
+
+
+    for itemed in Pds[:,0]:
+        Xds[count] = itemed
+        count = count + 1
 
 
 
 
-    Xds = np.array([])
 
-    for item in to_flatten:
-        Xds = np.append(Xds,item)
+
 
 
     vXd= np.multiply(kXd,Xds);
@@ -2021,77 +2159,332 @@ def createODEs(x,t,data,extra):
 
     # ## PUTTING IT TOGETHER  ##
 
-    to_flatten = [vRP1,vRP2,vRP3,vRP4,vRP5,vRP6,vRP7,vRP8,vRP9,vRP10,vRP11,vRP12,vRP13,vRP14,vRP15,vRP16,vRP17,vRP18,vRP19,vRP20,vRP21,vRP22,vRP23,vRP24,vRP25,vRP26,vRP27,vRP28,vRP29,vRP30,vRP31,vRP32,vRP33,vRP34]
 
 
-    vRP = np.array([])
 
-    for item in to_flatten:
-        vRP = np.append(vRP,item)
+
+
+    vRP = np.zeros(shape=(973))
+
+
+
+    count = 0
+
+
+    for itemf in vRP1:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP2:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP3:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP4:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP5:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP6:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP7:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP8:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP9:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP10:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP11:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP12:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP13:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP14:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP15:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP16:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP17:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP18:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP19:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP20:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP21:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP22:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP23:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP24:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP25:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP26:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP27:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP28:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP29:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP30:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP31:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP32:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP33:
+        vRP[count] = itemf
+        count = count+1
+
+    for itemf in vRP34:
+        vRP[count] = itemf
+        count = count+1
+
+
+    #############
+
 
 
     # v=[vbR;vdR;vTL;vTLCd';vE';vD';vC';vA';vR';vRP;vP';vDP';vPA';vXd];
-    v_temp = [vbR,vdR,vTL,np.matrix.transpose(vTLCd),np.matrix.transpose(vE),np.matrix.transpose(vD),np.matrix.transpose(vC),np.matrix.transpose(vA),np.matrix.transpose(vR),vRP,np.matrix.transpose(vP),np.matrix.transpose(vDP),np.matrix.transpose(vPA),vXd]
+    # v_temp = [vbR,vdR,vTL,np.matrix.transpose(vTLCd),np.matrix.transpose(vE),np.matrix.transpose(vD),np.matrix.transpose(vC),np.matrix.transpose(vA),np.matrix.transpose(vR),vRP,np.matrix.transpose(vP),np.matrix.transpose(vDP),np.matrix.transpose(vPA),vXd]
+    # v_temp = [vbR,vdR,vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd]
 
 
-    v = np.array([])
-
-    for item in v_temp:
-        v = np.append(v,item)
 
 
-    v = np.matrix(v);
-    v = np.matrix.transpose(v)
+
+
+
+    ########
+
+
+
+    v = np.zeros(shape=(2449,1))
+
+
+
+    count = 0
+
+    #[vbR,vdR,vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd]
+
+    for itemg in vbR:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vdR:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vTL:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vTLCd:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vE:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vD:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vC:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vA:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vR:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vRP:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vP:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vDP:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vPA:
+        v[count,0] = itemg
+        count = count+1
+
+    for itemg in vXd:
+        v[count,0] = itemg
+        count = count+1
+
+
+    #########
+
+
+    # v = np.matrix(v);
+    # v = np.matrix.transpose(v)
 
 
     v = v[0:2448,:]
     # getting rid of two 0s on the end to get the sizes to match
 
 
+    S_PARCDL_float = S_PARCDL * 1.0
 
-    ndot=S_PARCDL * (np.multiply(v,(VvPARCDL*1E12)));
-
-
-
-    temp = S_PARCDL[772,:]
+    # NOTE
+    ndot= np.dot(S_PARCDL_float, (np.multiply(v,(VvPARCDL*1E12))));
 
 
 
-    # NOTE - syntax for saving data to csv file, used for debugging
-    # np.savetxt('python_v.csv', v, fmt='%.2f', delimiter=',')
-    # np.savetxt('python_v2.csv', v, delimiter=',')
-    # np.savetxt('python_v3.csv', v, delimiter=',')
+
+    # fixing divide by zero issue
+
+    count = 0
+    i = 0
+    for element in VxPARCDL[:,0]:
+        if element == 0:
+            # VxPARCDL[i,0] = 1
+            count = count + 1
+        i = i + 1
+
+
+
+    nans_index = np.zeros(shape=(count))
+
+    count = 0
+    i = 0
+    for element in VxPARCDL[:,0]:
+        if element == 0:
+
+            VxPARCDL[i,0] = 1
+            nans_index[count] = i
+            count = count+1
+        i = i + 1
+
+
+
+
+
+
 
 
     ydot=ndot/(VxPARCDL*1E12);
 
 
-    flag=0;
-    new_data = [];
 
 
-    ydot[np.isnan(ydot)] = 0
-    to_return = []
-    for i in range(0,774):
-        to_return.append(ydot[i,0])
+    for item in nans_index:
+        ydot[np.int32(item)] = 0
+
+
+
+
+    # flag=0;
+
+    # NOTE commented out because was breaking compiler, don't think this is important since it never gets filled
+    # new_data = [];
+
+    # ydot[np.isnan(ydot)] = 0
+
+    # to_return = []
+    # for i in range(0,774):
+    #     to_return.append(ydot[i,0])
+
+    to_return = np.zeros(shape=(774))
+
+    counter = 0
+
+    for itemq in ydot[:,0]:
+        to_return[counter] = itemq
+        counter = counter + 1
 
 
 
     return to_return
+    # return to_return
 
 
-
-
-
-
-
-    # # NOTE - everything after this point is just for debugging
     #
-    # v_list = []
-    # for i in range(0,2448):
-    #     v_list.append(v[i,0])
-    #
-    #
+    #     # # NOTE - everything after this point is just for debugging
+    #     #
+    #     # v_list = []
+    #     # for i in range(0,2448):
+    #     #     v_list.append(v[i,0])
+    #     #
+    #     #
     # correct_ydot = []
     #
     # with open('correct_ydot.csv', newline='') as csvfile:
@@ -2100,23 +2493,23 @@ def createODEs(x,t,data,extra):
     #         x = ', '.join(row)
     #         x = x.split(',')
     #         correct_ydot.append(float(x[0]))
-    #
-    #
-    # correct_v = []
-    #
-    # with open('correct_v.csv', newline='') as csvfile:
-    #     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-    #     for row in spamreader:
-    #         x = ', '.join(row)
-    #         x = x.split(',')
-    #         correct_v.append(float(x[0]))
-    #
+    # #
+    # #
+    # # correct_v = []
+    # #
+    # # with open('correct_v.csv', newline='') as csvfile:
+    # #     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    # #     for row in spamreader:
+    # #         x = ', '.join(row)
+    # #         x = x.split(',')
+    # #         correct_v.append(float(x[0]))
+    # #
     # problem_indices = []
     #
     # accurate = 0
     # #
     # # # NOTE - ydot debug
-    # #
+    #
     # for i in range(len(to_return)):
     #     if abs(to_return[i] - correct_ydot[i]) < 0.0000000001:
     #         accurate = accurate+1
@@ -2127,26 +2520,26 @@ def createODEs(x,t,data,extra):
     #         print()
     #         problem_indices.append(i)
     #
+    # #
+    # #
+    # # # NOTE - v comparison
+    # # # for i in range(len(v_list)):
+    # # #     if abs(v_list[i] - correct_v[i]) < 0.0000001:
+    # # #         # print(to_return[i],correct_ydot[i])
+    # # #         # print("good")
+    # # #         # print(i)
+    # # #         accurate = accurate+1
+    # # #     else:
+    # # #         # print(i)
+    # # #         print(v_list[i],correct_v[i])
+    # # #         print("bad")
+    # # #         print(i)
+    # # #         print()
+    # # #         problem_indices.append(i)
+    # # #
+    # # #
+    # print()
     #
-    #
-    # # NOTE - v comparison
-    # # for i in range(len(v_list)):
-    # #     if abs(v_list[i] - correct_v[i]) < 0.0000001:
-    # #         # print(to_return[i],correct_ydot[i])
-    # #         # print("good")
-    # #         # print(i)
-    # #         accurate = accurate+1
-    # #     else:
-    # #         # print(i)
-    # #         print(v_list[i],correct_v[i])
-    # #         print("bad")
-    # #         print(i)
-    # #         print()
-    # #         problem_indices.append(i)
-    # #
-    # #
-    # # print()
-    # #
     # print(accurate/len(to_return))
     #
     # # #

@@ -68,11 +68,11 @@ STIM= np.zeros(shape = (775));
 
 # NOTE - 2. Growth factor stimulus to assess ERK and AKT. Here let’s look at ppERK (index 718) and ppAKT (index 697)
 # time courses over the 6 hours. They should go up and back down. We can compare to Matlab output.
-
-# flagD=1;
-# th=6;
-# STIM[155:162]=[10,10,10,10,10,10,1000];
-# RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[696,717])
+#
+flagD=1;
+th=6;
+STIM[155:162]=[10,10,10,10,10,10,1000];
+RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[696,717])
 
 
 
@@ -83,10 +83,10 @@ STIM= np.zeros(shape = (775));
 # NOTE - 4. Cause apoptosis via TRAIL. Here let’s look at cPARP, which should
 # abruptly increase when the cell dies (index 106)
 
-flagD=1;
-th=24;
-STIM[83]=100;
-RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[105])
+# flagD=1;
+# th=24;
+# STIM[83]=100;
+# RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[105])
 
 
 

@@ -10,11 +10,16 @@ from createODEs import *
 
 from numba import jit
 
+# from scikits.odes import ode
+# from scikits.odes import *
+
+from old_createODEs import *
+
+
 # from skel_createODEs import skel_createODEs
 
 
 import time
-start_time = time.time()
 
 
 
@@ -233,12 +238,17 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
+
     # % Starting simulations
     print("... Starting Sims")
+    start_time = time.time()
 
 
 
-    for i in range(1,int(N_STEPS)+1):
+    for i in range(0,int(N_STEPS)+1):
+
+    # comment back in
+    # for i in range(1,int(N_STEPS)+1):
 
         # gm
         [xginN,xgacN,AllGenesVecN,xmN,vTC] = gm(flagD,dataG,ts,xoutG,xoutS);
@@ -258,10 +268,11 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
         xoutG_all[i,:] = np.matrix.transpose(xoutG)
 
+        # if i == 0:
         try:
             xoutS_all[i,:] = np.squeeze(np.asarray(xoutS))
         except:
-            xoutS_all[i,:] = np.squeeze(np.asarray(xoutS[0]))
+            xoutS_all[i,:] = np.squeeze(np.asarray(xoutS[1]))
 
 
 
@@ -273,38 +284,113 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
-
+        # print(xoutS.shape)
         # NOTE - testing purposes, comment out
         # createODEs(xoutS_all[i,:],ts_up,dataS,0)
         # sys.exit()
 
 
+        # import ctypes
+        # pyarr = [ts_up-ts, ts_up]
+        # arr = (ctypes.c_int * len(pyarr))(*pyarr)
 
-        #NOTE odeint attempt
-        # xoutS = odeint(createODEs, xoutS_all[i,:],[ts_up-ts, ts_up], args=(dataS,0))
-        xoutS = odeint(createODEs, xoutS_all[i,:],ts_up, args=(dataS,0))
+        # jit_func = jit(nopython=True)(createODEs)
+
+        # NOTE odeint attempt
 
 
+
+
+        dataS_to_pass = np.array([dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE])
+
+
+
+
+        # for item in dataS_to_pass:
+        #     print(type(item))
+        #     print(item.shape)
+        #     print()
+        # sys.exit()
+        # matrix_test = np.zeros(shape=(20,20))
+        # real version
+
+
+        # TODO
+        # solve odes
+        xoutS = odeint(createODEs, xoutS_all[i,:],np.array([ts_up-ts, ts_up]), args=(dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE))
+
+        # call function
+        # print("new")
+        # createODEs(xoutS_all[i,:],np.array([ts_up-ts, ts_up]),dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE)
+
+
+        # print("old")
+        # old_createODEs(xoutS_all[i,:],[ts_up-ts, ts_up],dataS, 0)
+
+        # xoutS = odeint(createODEs, xoutS_all[i,:],[ts_up-ts, ts_up])
+
+        # xoutS = odeint(createODEs, xoutS_all[i,:],ts_up, args=(dataS,0))
+
+
+
+        # NOTE - scikits.odes attempt
+
+        # t0 = ts_up-ts
+        # y0 = xoutS_all[i,:]
+        # solution = ode('ida', createODEs, old_api=False).solve(np.array([ts_up-ts, ts_up]), y0)
+        #
+        # print(solution.values.y)
+        # print("good")
+
+        # NOTE - ode attempt
+        # r = ode(createODEs).set_integrator('zvode', method='bdf', with_jacobian=False)
+        # r.set_initial_value(xoutS_all[i,:], ts_up-ts)#.set_f_params(2.0)#.set_jac_params(2.0)
+        # t1 = ts_up
+        # dt = ts
+        # while r.successful() and r.t < t1:
+        #     r.integrate(r.t+dt)
+        #     print("%g %g" % (r.t, r.y))
+
+
+
+
+        # solver = ode(rhs)
+        # solver.set_initial_value(xoutS_all[i,:])
+        # while solver.successful() and solver.t < 1:
+        #     solver.integrate(solver.t + 0.1)
+
+
+
+        # if i == 1:
+        #     np.savetxt('iteration1.csv', np.matrix.transpose(xoutS), delimiter=',')
+        #
+        # if i == 50:
+        #     np.savetxt('iteration500.csv', np.matrix.transpose(xoutS), delimiter=',')
 
 
 
         try:
             print(xoutS[0,inds_to_watch])
+            # print(xoutS[1,inds_to_watch])
         except:
-            print(xoutS)
+             print(xoutS)
 
 
 
+        print("--- %s seconds ---" % (time.time() - start_time))
 
         print(i/N_STEPS)
-        print()
 
 
+        # if i == 0:
+        #     s
 
 
         xoutG_all[i,:] = np.matrix.transpose(xoutG);
 
-        xoutS_all[i,:] = xoutS[xoutS.shape[0]-1,:]
+        # xoutS_all[i,:] = xoutS[xoutS.shape[0]-1,:]
+        # xoutS_all[i+1,:] = xoutS[xoutS.shape[0]-1,:]
+        print()
 
 
 
