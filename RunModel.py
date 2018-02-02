@@ -1,25 +1,33 @@
 # function [tout_all,xoutG_all,xoutS_all]=RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs)
-import pandas
+# import pandas
 import sys
 import numpy as np
 from RunPrep import *
 from gm import *
 from scipy.integrate import odeint
-from scipy.integrate import ode
+# from scipy.integrate import ode
 from createODEs import *
 
-from numba import jit
+# from numba import jit
+
+from assimulo.solvers import CVode
+# from assimulo.solvers import LSODAR
+
+from assimulo.problem import Explicit_Problem
 
 # from scikits.odes import ode
 # from scikits.odes import *
 
-from old_createODEs import *
+from nc_createODEs import *
 
+np.set_printoptions(threshold=np.nan)
 
-# from skel_createODEs import skel_createODEs
-
+import matplotlib.pyplot as plt
 
 import time
+
+
+
 
 
 
@@ -199,8 +207,7 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
         xoutS[0,STIM.astype(bool)] = STIM[STIM.astype(bool)]
 
-        # TODO - not sure if this is working
-        # this only runs if STIM has nonzero values
+
 
 
 
@@ -210,9 +217,9 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
-    # TODO - ODE stuff
+    # NOTE - matlab code
     # % Instantiation
-    t0 = 0;
+    # t0 = 0;
     # optionscvodes = CVodeSetOptions('UserData', dataS,...
     #                           'RelTol',1.e-3,...
     #                           'LinearSolver','Dense',...
@@ -245,12 +252,15 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
+
     for i in range(0,int(N_STEPS)+1):
 
     # comment back in
     # for i in range(1,int(N_STEPS)+1):
 
         # gm
+
+
         [xginN,xgacN,AllGenesVecN,xmN,vTC] = gm(flagD,dataG,ts,xoutG,xoutS);
 
 
@@ -284,93 +294,52 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
-        # print(xoutS.shape)
-        # NOTE - testing purposes, comment out
-        # createODEs(xoutS_all[i,:],ts_up,dataS,0)
+
+        # NOTE
+        # scipy.odeint
+        # xoutS = odeint(createODEs, xoutS_all[i,:],np.array([ts_up-ts, ts_up]), args=(dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE))
+
+
+
+
+        # NOTE
+        # assimulo
+
+        ode_start_time = time.time()
+
+        exp_mod = MyProblem(y0=xoutS_all[i,:],dataS=dataS)
+        exp_sim = CVode(exp_mod)
+
+
+        exp_sim.re_init(ts_up-ts,xoutS_all[i,:] )
+
+
+
+        # # NOTE - code to do the whole thing at once -- won't be correct because of other stuff in this for loop
+        # t1, xoutS = exp_sim.simulate(ts_up+(N_STEPS*ts),N_STEPS) #Simulate 5 seconds
+
+
+        t1, xoutS = exp_sim.simulate(ts_up, 1)
+
+        # NOTE - plot
+        # t_lin = np.linspace(ts_up,ts_up+(N_STEPS*ts),N_STEPS+1)
+        # xoutS = np.linspace(ts_up-ts,ts_up)
+        # plt.plot(t_lin, xoutS[:,696])
+        # plt.plot(t_lin, xoutS[:,717])
+        # plt.show()
+
+
+        # NOTE - save to csv
+        # np.savetxt('ppATK_and_ppERK.csv', xoutS[:,inds_to_watch], delimiter=',')
+        # xoutS = xoutS[1]
+        # print(xoutS)
+        # print("sim done")
+
+
         # sys.exit()
-
-
-        # import ctypes
-        # pyarr = [ts_up-ts, ts_up]
-        # arr = (ctypes.c_int * len(pyarr))(*pyarr)
-
-        # jit_func = jit(nopython=True)(createODEs)
-
-        # NOTE odeint attempt
-
-
-
-
-        dataS_to_pass = np.array([dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE])
-
-
-
-
-        # for item in dataS_to_pass:
-        #     print(type(item))
-        #     print(item.shape)
-        #     print()
-        # sys.exit()
-        # matrix_test = np.zeros(shape=(20,20))
-        # real version
-
-
-        # TODO
-        # solve odes
-        xoutS = odeint(createODEs, xoutS_all[i,:],np.array([ts_up-ts, ts_up]), args=(dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE))
-
-        # call function
-        # print("new")
-        # createODEs(xoutS_all[i,:],np.array([ts_up-ts, ts_up]),dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE)
-
-
-        # print("old")
-        # old_createODEs(xoutS_all[i,:],[ts_up-ts, ts_up],dataS, 0)
-
-        # xoutS = odeint(createODEs, xoutS_all[i,:],[ts_up-ts, ts_up])
-
-        # xoutS = odeint(createODEs, xoutS_all[i,:],ts_up, args=(dataS,0))
-
-
-
-        # NOTE - scikits.odes attempt
-
-        # t0 = ts_up-ts
-        # y0 = xoutS_all[i,:]
-        # solution = ode('ida', createODEs, old_api=False).solve(np.array([ts_up-ts, ts_up]), y0)
-        #
-        # print(solution.values.y)
-        # print("good")
-
-        # NOTE - ode attempt
-        # r = ode(createODEs).set_integrator('zvode', method='bdf', with_jacobian=False)
-        # r.set_initial_value(xoutS_all[i,:], ts_up-ts)#.set_f_params(2.0)#.set_jac_params(2.0)
-        # t1 = ts_up
-        # dt = ts
-        # while r.successful() and r.t < t1:
-        #     r.integrate(r.t+dt)
-        #     print("%g %g" % (r.t, r.y))
-
-
-
-
-        # solver = ode(rhs)
-        # solver.set_initial_value(xoutS_all[i,:])
-        # while solver.successful() and solver.t < 1:
-        #     solver.integrate(solver.t + 0.1)
-
-
-
-        # if i == 1:
-        #     np.savetxt('iteration1.csv', np.matrix.transpose(xoutS), delimiter=',')
-        #
-        # if i == 50:
-        #     np.savetxt('iteration500.csv', np.matrix.transpose(xoutS), delimiter=',')
-
-
 
         try:
-            print(xoutS[0,inds_to_watch])
+            print(xoutS[1,inds_to_watch])
             # print(xoutS[1,inds_to_watch])
         except:
              print(xoutS)

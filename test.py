@@ -57,7 +57,7 @@ STIM= np.zeros(shape = (775));
 
 # flagD=1;
 # th=6;
-# RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs)
+# RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[696,717])
 
 
 
