@@ -1,6 +1,5 @@
 # testing file
 
-import sys
 import numpy as np
 from RunPrep import *
 from RunModel import *

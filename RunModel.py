@@ -1,33 +1,23 @@
 # function [tout_all,xoutG_all,xoutS_all]=RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs)
-# import pandas
 import sys
-import numpy as np
-from RunPrep import *
-from gm import *
-from scipy.integrate import odeint
-# from scipy.integrate import ode
-from createODEs import *
-
-# from numba import jit
-
-from assimulo.solvers import CVode
-# from assimulo.solvers import LSODAR
-
-from assimulo.problem import Explicit_Problem
-
-# from scikits.odes import ode
-# from scikits.odes import *
-
-from nc_createODEs import *
-
-np.set_printoptions(threshold=np.nan)
-
-import matplotlib.pyplot as plt
-
 import time
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+from RunPrep import *
+from gm import *
+from nc_createODEs import *
+from Jeval774 import Jeval774
+# from scipy.integrate import odeint
+# from createODEs import *
+
+from assimulo.solvers import CVode
+from assimulo.problem import Explicit_Problem
 
 
+
+np.set_printoptions(threshold=np.nan)
 
 
 
@@ -295,31 +285,30 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
-        # NOTE
+
+
         # scipy.odeint
         # xoutS = odeint(createODEs, xoutS_all[i,:],np.array([ts_up-ts, ts_up]), args=(dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE))
 
 
+        # NOTE- remember to make dataS.mExp_nM.as_matrix() !!!
 
 
-        # NOTE
-        # assimulo
+
+
+        # assimulo ODE
 
         ode_start_time = time.time()
-
-        exp_mod = MyProblem(y0=xoutS_all[i,:],dataS=dataS)
+        exp_mod = MyProblem(y0=xoutS_all[i,:],dataS=dataS, Jeval774 = Jeval774)
         exp_sim = CVode(exp_mod)
-
-
         exp_sim.re_init(ts_up-ts,xoutS_all[i,:] )
-
+        t1, xoutS = exp_sim.simulate(ts_up, 1)
 
 
         # # NOTE - code to do the whole thing at once -- won't be correct because of other stuff in this for loop
         # t1, xoutS = exp_sim.simulate(ts_up+(N_STEPS*ts),N_STEPS) #Simulate 5 seconds
 
 
-        t1, xoutS = exp_sim.simulate(ts_up, 1)
 
         # NOTE - plot
         # t_lin = np.linspace(ts_up,ts_up+(N_STEPS*ts),N_STEPS+1)
@@ -336,32 +325,19 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
         # print("sim done")
 
 
-        # sys.exit()
-
         try:
             print(xoutS[1,inds_to_watch])
-            # print(xoutS[1,inds_to_watch])
         except:
              print(xoutS)
 
 
 
-        print("--- %s seconds ---" % (time.time() - start_time))
+        print("--- %s seconds ---" % (time.time() - ode_start_time))
 
-        print(i/N_STEPS)
-
-
-        # if i == 0:
-        #     s
+        print("Percent complete: " + str(i/N_STEPS))
 
 
         xoutG_all[i,:] = np.matrix.transpose(xoutG);
-
-        # xoutS_all[i,:] = xoutS[xoutS.shape[0]-1,:]
-        # xoutS_all[i+1,:] = xoutS[xoutS.shape[0]-1,:]
-        print()
-
-
 
         ts_up = ts_up + ts
 
