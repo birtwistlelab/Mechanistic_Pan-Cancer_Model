@@ -97,20 +97,26 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
 
     # With AP1*cMYC exception:
-    # hills(10:12)=(TFa(10:12,1)./(1+TFa(10:12,1))).*(TFa(10:12,2)./(1+TFa(10:12,2)));
-    hills[9:12]=(TFa[9:12,0]/np.multiply((1+TFa[9:12,0]),(TFa[9:12,1]/(1+TFa[9:12,1]))));
+    # hills(10:12)=(TFa(10:12,1)./      (1+TFa(10:12,1))) .*    (TFa(10:12,2)./(1+TFa(10:12,2)));
+    hills[9:12]=np.multiply((TFa[9:12,0]/(1+TFa[9:12,0])),(TFa[9:12,1]/(1+TFa[9:12,1])));
     # so many parenthese :-/
 
 
 
-
     # vTC
+
+
+    # TODO - problem is in hills
+
     induced=np.multiply(np.multiply(xgac,kTCmaxs),hills);
 
     kTCleak = np.matrix.transpose(np.matrix(kTCleak))
 
 
     leak= np.multiply(xgac,kTCleak);
+
+
+
 
 
 
@@ -173,8 +179,13 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
 
     # # mRNA
+
+
+
     Nb=np.random.poisson(vTC*ts);
     Nd=np.random.poisson(vTCd*ts);
+
+
 
 
 
