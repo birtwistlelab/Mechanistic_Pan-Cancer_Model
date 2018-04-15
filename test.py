@@ -15,6 +15,10 @@ STIM= np.zeros(shape = (775));
 
 
 
+
+
+
+
 # Required Inputs:
 # flagD: 1 for deterministic simulations, 0 for stochastic simulations.
 # th: simulation time (hours)
@@ -44,10 +48,9 @@ STIM= np.zeros(shape = (775));
 
 
 # NOTE - original test, to compare with ydot values that Mehdi sent
-# flagD = 0
-# th = 24
-# RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs)
-
+flagD = 0
+th = 24
+output = RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs)
 
 
 
@@ -68,11 +71,17 @@ STIM= np.zeros(shape = (775));
 # NOTE - 2. Growth factor stimulus to assess ERK and AKT. Here let’s look at ppERK (index 718) and ppAKT (index 697)
 # time courses over the 6 hours. They should go up and back down. We can compare to Matlab output.
 #
-flagD=1;
-th=6;
-STIM[155:162]=[10,10,10,10,10,10,1000];
-RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[696,717])
+# flagD=1;
+# th=6;
+# STIM[155:162]=[10,10,10,10,10,10,1000];
+# RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[696,717])
 
+
+# same thing but stochastic
+# flagD=0;
+# th=6;
+# STIM[155:162]=[10,10,10,10,10,10,1000];
+# RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[696,717])
 
 
 

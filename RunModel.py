@@ -221,7 +221,7 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
     #
 
 
-    tout_all = np.zeros(shape=(N_STEPS+1,1))
+    tout_all = np.zeros(shape=(N_STEPS+1))
     xoutG_all = np.zeros(shape=(N_STEPS+1,len(xoutG)))
     xoutS_all = np.zeros(shape=(N_STEPS+1,xoutS.shape[1]))
     tout_all[0] = 0
@@ -251,13 +251,18 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
         # gm
 
 
+
         [xginN,xgacN,AllGenesVecN,xmN,vTC] = gm(flagD,dataG,ts,xoutG,xoutS);
+
+
 
 
 
         xoutG = np.append(np.append(np.squeeze(np.asarray(xgacN)),np.squeeze(np.asarray(xginN))),np.squeeze(np.asarray(xmN)))
         # NOTE - matrix to array syntax
         xoutG = np.matrix.transpose(np.matrix(xoutG))
+
+
 
 
         dataS.mMod=xmN*(1E9/(Vc*6.023E+23)); #convert mRNAs from mpc to nM
@@ -267,6 +272,12 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
         xoutG_all[i,:] = np.matrix.transpose(xoutG)
+
+
+
+        # TODO - debugging
+
+
 
         # if i == 0:
         try:
@@ -293,6 +304,11 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
         # NOTE- remember to make dataS.mExp_nM.as_matrix() !!!
 
+
+
+        # TODO - debugging
+        # print(xoutS[0,726])
+        # sys.exit()
 
 
 
@@ -337,11 +353,52 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
         print("Percent complete: " + str(i/N_STEPS))
 
 
-        xoutG_all[i,:] = np.matrix.transpose(xoutG);
+        # xoutG_all[i,:] = np.matrix.transpose(xoutG);
+
+        try:
+            tout_all[i+1] = ts_up
+        except:
+            pass
 
         ts_up = ts_up + ts
 
 
 
+
+
+    # print(xoutS_all)
+    #
+    # print(xoutS_all.shape)
+    #
+    #
+    # print()
+    #
+    # print(xoutS_all[:,inds_to_watch])
+    #
+    # print(N_STEPS)
+    #
+    #
+    # # NOTE - plot
+    # t_lin = np.linspace(ts_up,ts_up+(N_STEPS*ts),N_STEPS+1)
+    # xoutS = np.linspace(ts_up-ts,ts_up)
+    # print(inds_to_watch)
+    # print(inds_to_watch[0])
+    # print(inds_to_watch[1])
+    #
+    # # print(xoutS[:,696])
+    # plt.plot(t_lin, xoutS_all[:,inds_to_watch])
+    # #
+    # plt.show()
+
+
+
     print("ODEs done")
     print("--- %s seconds ---" % (time.time() - start_time))
+
+
+
+    # TODO needs to return tout_all, xoutG_all, xoutS_all
+
+
+
+    return [tout_all, xoutG_all, xoutS_all]

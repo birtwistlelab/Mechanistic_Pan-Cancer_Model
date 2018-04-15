@@ -28,7 +28,7 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     indsD=dataG.indsD;
 
 
-
+    # TODO - check
     numberofgenes = tck50as.shape[0]
     numberofTARs = tck50as.shape[1]
 
@@ -106,7 +106,6 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     # vTC
 
 
-    # TODO - problem is in hills
 
     induced=np.multiply(np.multiply(xgac,kTCmaxs),hills);
 
@@ -155,7 +154,6 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
 
 
-
     # # geneson=logical(AllGenesVec);
     geneson = AllGenesVec.astype(bool).astype(int)
 
@@ -167,11 +165,15 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     in2ac = np.logical_and(genesoff,RandomNumbers>=pon)
 
 
-
     # # % Generating new AllGenesVec and allocating active and inactive genes
     AllGenesVecN=AllGenesVec;
-    AllGenesVecN[ac2in-1]=0;
-    AllGenesVecN[in2ac-1]=1;
+
+
+    # AllGenesVecN[ac2in-1]=0;
+    # AllGenesVecN[in2ac-1]=1;
+    AllGenesVecN[ac2in]=0;
+    AllGenesVecN[in2ac]=1;
+
     xgacN = np.dot(GenePositionMatrix,AllGenesVecN);
     xginN=(xgac+xgin)-xgacN;
 
@@ -197,7 +199,11 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
 
     Nd[indsD]=vTCd[indsD]*ts;
+
     xgacN[indsD]=xoutG[indsD];
+
+
+
     xginN[indsD]=xoutG[indsD+numberofgenes];
 
 
