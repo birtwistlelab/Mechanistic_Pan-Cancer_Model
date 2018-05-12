@@ -28,7 +28,6 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     indsD=dataG.indsD;
 
 
-    # TODO - check
     numberofgenes = tck50as.shape[0]
     numberofTARs = tck50as.shape[1]
 
@@ -93,7 +92,6 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     TFa=(TAs/tck50as)**tcnas;
 
 
-    # TODO - problem here
 
     TFa[np.isnan(TFa)]=0;
     TFr=(TRs/tck50rs)**tcnrs;
