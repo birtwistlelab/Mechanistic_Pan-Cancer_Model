@@ -56,6 +56,8 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # TARs
     pcFos_cJun=xoutS[0,684]; #1
+    print(pcFos_cJun)
+
     cMyc=xoutS[0,685]; #2
     p53ac=xoutS[0,2]; #3
     FOXOnuc=xoutS[0,767]; #4
@@ -65,8 +67,11 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # activators
 
-
     TAs[9:12,0] = pcFos_cJun
+
+
+
+
     TAs[98,0] = pcFos_cJun
 
     TAs[9:12,1]=cMyc;
@@ -87,6 +92,10 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # make hills
     TFa=(TAs/tck50as)**tcnas;
+
+
+    # TODO - problem here
+
     TFa[np.isnan(TFa)]=0;
     TFr=(TRs/tck50rs)**tcnrs;
     TFr[np.isnan(TFr)]=0;
@@ -98,18 +107,24 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # With AP1*cMYC exception:
     # hills(10:12)=(TFa(10:12,1)./      (1+TFa(10:12,1))) .*    (TFa(10:12,2)./(1+TFa(10:12,2)));
-    hills[9:12]=np.multiply((TFa[9:12,0]/(1+TFa[9:12,0])),(TFa[9:12,1]/(1+TFa[9:12,1])));
+
+    # TODO - problem is here!!!!!
+    hills[9:12]= np.multiply((TFa[9:12,0]/(1+TFa[9:12,0])),(TFa[9:12,1]/(1+TFa[9:12,1])));
     # so many parenthese :-/
 
 
 
+
+    #hills(10:12)=    (TFa(10:12,1)./   (1+TFa (10:12,1)      )     ).*(TFa(10:12,2)./(1+TFa(10:12,2)));
     # vTC
 
-
+    hills = np.matrix(hills)
+    hills = np.matrix.transpose(hills)
 
     induced=np.multiply(np.multiply(xgac,kTCmaxs),hills);
 
-    kTCleak = np.matrix.transpose(np.matrix(kTCleak))
+
+    # kTCleak = np.matrix.transpose(np.matrix(kTCleak))
 
 
     leak= np.multiply(xgac,kTCleak);
@@ -119,10 +134,22 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
 
 
+
+
+
     vTC=leak+induced;
+
+
+
+
+
+
+
 
     # vTCd
     vTCd= np.multiply(np.matrix.transpose(np.matrix(kTCd)),xm);
+
+
 
 
 
@@ -208,9 +235,7 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
 
 
-
     # # % OUTPUT deterministic results instead:
-
 
     if flagD:
         Nb=vTC*ts;
@@ -219,11 +244,10 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
         xginN = xoutG[numberofgenes:numberofgenes*2]
 
 
+
     # # % Finish mRNA
     xmN=xm+Nb-Nd;
     xmN[xmN<0]=0;
-
-    xmN = xmN[:,0]
 
 
     return [xginN,xgacN,AllGenesVecN,xmN,vTC]
