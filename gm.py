@@ -56,7 +56,6 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # TARs
     pcFos_cJun=xoutS[0,684]; #1
-    print(pcFos_cJun)
 
     cMyc=xoutS[0,685]; #2
     p53ac=xoutS[0,2]; #3
@@ -100,7 +99,6 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     TFr=(TRs/tck50rs)**tcnrs;
     TFr[np.isnan(TFr)]=0;
     hills = np.sum(TFa,axis=1)/(1 + np.sum(TFa,axis=1) + np.sum(TFr,axis=1))
-    # NOTE important - the setting dimension to 2 in matlab is the same as setting axis to 1 in numpy.... i think. sums by row instead of by column
 
 
 
@@ -108,14 +106,12 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     # With AP1*cMYC exception:
     # hills(10:12)=(TFa(10:12,1)./      (1+TFa(10:12,1))) .*    (TFa(10:12,2)./(1+TFa(10:12,2)));
 
-    # TODO - problem is here!!!!!
     hills[9:12]= np.multiply((TFa[9:12,0]/(1+TFa[9:12,0])),(TFa[9:12,1]/(1+TFa[9:12,1])));
     # so many parenthese :-/
 
 
 
 
-    #hills(10:12)=    (TFa(10:12,1)./   (1+TFa (10:12,1)      )     ).*(TFa(10:12,2)./(1+TFa(10:12,2)));
     # vTC
 
     hills = np.matrix(hills)
@@ -124,17 +120,7 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     induced=np.multiply(np.multiply(xgac,kTCmaxs),hills);
 
 
-    # kTCleak = np.matrix.transpose(np.matrix(kTCleak))
-
-
     leak= np.multiply(xgac,kTCleak);
-
-
-
-
-
-
-
 
 
     vTC=leak+induced;
