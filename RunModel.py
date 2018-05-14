@@ -289,6 +289,7 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
         if xoutS[0,103]<xoutS[0,105]:
             print("Apoptosis happened")
+            # sys.exit()
             tout_all = tout_all[0:i+1]
             xoutG_all = xoutG_all[0:i+1]
             xoutS_all = xoutS_all[0:i+1]

@@ -28,6 +28,8 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     indsD=dataG.indsD;
 
 
+
+
     numberofgenes = tck50as.shape[0]
     numberofTARs = tck50as.shape[1]
 
@@ -116,6 +118,7 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     hills = np.matrix.transpose(hills)
 
     induced=np.multiply(np.multiply(xgac,kTCmaxs),hills);
+
 
 
     leak= np.multiply(xgac,kTCleak);
