@@ -546,6 +546,9 @@ def RunPrep():
     new_x0gm_mpc_D = np.matrix.transpose(np.matrix(new_x0gm_mpc_D))
 
 
+    kTCleak = kTCleak.as_matrix()
+    kTCleak = np.matrix(kTCleak)
+    kTCleak = np.matrix.transpose(kTCleak)
 
     class dataG:
         def __init__(self, x0gm_mpc, x0gm_mpc_D, kGin, kGac, kTCleak, kTCmaxs, kTCd, tcnas, tcnrs, tck50as, tck50rs, GenePositionMatrix, AllGenesVec, Vn, indsD):

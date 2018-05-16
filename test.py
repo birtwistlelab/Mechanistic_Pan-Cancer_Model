@@ -1,5 +1,22 @@
 # testing file
 
+
+
+# TODO
+# Fig. 3F (stochastic)
+# Fig. 3H (stochastic)
+# Fig. 4A
+# Fig. 5A
+# Fig. 6B
+
+
+
+
+
+
+
+
+
 import numpy as np
 from RunPrep import *
 from RunModel import *
@@ -9,10 +26,10 @@ from RunModel import *
 # setting things up
 
 [dataS, dataG] = RunPrep()
+
 xoutS = []
 xoutG = []
 STIM= np.zeros(shape = (775));
-
 
 
 
@@ -48,18 +65,18 @@ STIM= np.zeros(shape = (775));
 
 
 # NOTE - original test, to compare with ydot values that Mehdi sent
-flagD = 0
-th = 24
-output = RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs)
+# flagD = 0
+# th = 24
+# output = RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs)
 
 
 
 
 # NOTE -1.  no stimuli
 
-# flagD=1;
-# th=6;
-# RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[696,717])
+flagD=1;
+th=6;
+[t,xoutG,xouts] = RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs,[688,100])
 
 
 
