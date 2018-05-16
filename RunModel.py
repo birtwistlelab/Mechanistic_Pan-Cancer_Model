@@ -61,6 +61,8 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
     ts_up=ts;
     N_STEPS=th*3600/ts;
 
+    N_STEPS = int(N_STEPS)
+
 
     # % IMPORT INITIALIZED PARAMETERS
     pathi='initialized/';
