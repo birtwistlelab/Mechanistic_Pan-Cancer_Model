@@ -143,27 +143,36 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
     # %species
 
 
-    xoutS = []
-
-    with open(pathi + 'i_xoutF.csv', newline='') as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-        for row in spamreader:
-            x = ', '.join(row)
-            x = x.split(',')
-
-            to_append = []
-            for item in x:
-                to_append.append(float(item))
-
-            xoutS.append(to_append)
 
 
+    # TODO - need to fix this to allow for xoutS to be taken as input
+
+
+    if len(xoutS) == 0:
+        xoutS = []
+
+        with open(pathi + 'i_xoutF.csv', newline='') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+            for row in spamreader:
+                x = ', '.join(row)
+                x = x.split(',')
+
+                to_append = []
+                for item in x:
+                    to_append.append(float(item))
+
+                xoutS.append(to_append)
 
 
 
-    xoutS = np.matrix(xoutS)
 
-    xoutS = xoutS[24,:]
+
+        xoutS = np.matrix(xoutS)
+
+
+
+        xoutS = xoutS[24,:]
+
 
 
 
@@ -401,7 +410,6 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
-    # TODO needs to return tout_all, xoutG_all, xoutS_all
 
 
 
