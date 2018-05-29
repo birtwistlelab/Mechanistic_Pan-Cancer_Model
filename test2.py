@@ -10,52 +10,24 @@ np.set_printoptions(threshold=np.nan)
 
 
 
-
-# Figure 3G
-# TRAIL dose response Time Course
-
-
-
-
-# # NOTE - generating data
-th=200;
+# deterministic
+th=12;
 flagD=1;
-
-i=0
-
-traildoses=[0.000385, 0.001925, 0.00385, 0.01925, 0.0385, 0.1925, 0.385, 1.9250, 3.85, 19.25, 38.5]
-# # traildoses=[0.001925,  0.385, 1.9250, 19.25, 38.5]
-
-
-
-
-
-
-
 [dataS, dataG] = RunPrep()
-
-
-
 STIM = np.zeros(shape = (775));
-STIM [84-1] = traildoses[0]
+STIM [84-1] = 0.00385
+[t, xoutG, xoutS] = RunModel(flagD, th, STIM, [], [], dataS, dataG, dataG.kTCleak, dataG.kTCmaxs)
 
 
 
+# stochastic
+th=12;
+flagD=0
+STIM = np.zeros(shape = (775));
+STIM[156-1:162]=[3.3,100,100,100,100,100,1721]
+[dataS, dataG] = RunPrep()
+[t, xoutG, xoutS] = RunModel(flagD, th, STIM, xoutS_up, xoutG_up, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs)
 
-dataS_up = dataS
-
-
-[t, xoutG, xoutS] = RunModel(flagD, th, STIM, [], [], dataS_up, dataG, dataG.kTCleak, dataG.kTCmaxs)
-
-
-
-
-
-
-
-np.savetxt('t'+'_' + str(i)  + '.csv', t, delimiter=',')
-np.savetxt('xoutG' +'_' + str(i)  + '.csv', xoutG, delimiter=',')
-np.savetxt('xoutS' +'_' + str(i)  + '.csv', xoutS, delimiter=',')
 
 
 
