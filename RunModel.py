@@ -1,6 +1,7 @@
 # function [tout_all,xoutG_all,xoutS_all]=RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs)
 import sys
 import time
+# import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -102,26 +103,22 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
     # % for gm
 
-    try:
-      kTCleak
-    except NameError:
-      kTCleak = []
 
+
+    if len(kTCleak)==0:
       for line in open(pathi + "i_kTCleakF.txt").readlines():
           kTCleak.append(float(line))
-    else:
-      pass
+      kTCleak = np.matrix.transpose(np.matrix(kTCleak))
 
 
-    try:
-      kTCleak
-    except NameError:
-      kTCmaxs = []
 
+
+
+    if len(kTCmaxs)==0:
       for line in open(pathi + "i_kTCmaxsF.txt").readlines():
           kTCmaxs.append(float(line))
-    else:
-      pass
+      kTCmaxs = np.matrix.transpose(np.matrix(kTCmaxs))
+      kTCmaxs = np.array(kTCmaxs)
 
 
     # % modifying data.S structure
@@ -167,13 +164,11 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
-
-
         xoutS = np.matrix(xoutS)
 
-
-
         xoutS = xoutS[24,:]
+
+
 
 
 
@@ -189,6 +184,10 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
             xoutG[indsD] = dataG.x0gm_mpc_D[indsD]
             xoutG[indsD+141] = dataG.x0gm_mpc_D[indsD+141]
             xoutG[indsD+141*2] = dataG.x0gm_mpc_D[indsD+141*2]
+
+
+
+
 
 
 
@@ -281,6 +280,11 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
 
 
 
+
+
+
+
+
         xoutG_all[i,:] = np.matrix.transpose(xoutG)
 
 
@@ -317,23 +321,22 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
         # xoutS = odeint(createODEs, xoutS_all[i,:],np.array([ts_up-ts, ts_up]), args=(dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE))
 
 
-        # NOTE- remember to make dataS.mExp_nM.as_matrix() !!!
 
 
 
-        # TODO - debugging
-        # print(xoutS[0,726])
-        # sys.exit()
-
-
-
+        # sys.stdout = open(os.devnull, "w")
         # assimulo ODE
 
         ode_start_time = time.time()
         exp_mod = MyProblem(y0=xoutS_all[i,:],dataS=dataS, Jeval774 = Jeval774)
         exp_sim = CVode(exp_mod)
+
+        exp_sim.verbosity=50
+
         exp_sim.re_init(ts_up-ts,xoutS_all[i,:] )
         t1, xoutS = exp_sim.simulate(ts_up, 1)
+
+        # sys.stdout = sys.__stdout__
 
 
         # # NOTE - code to do the whole thing at once -- won't be correct because of other stuff in this for loop
