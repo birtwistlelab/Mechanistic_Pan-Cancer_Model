@@ -8,6 +8,16 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     # going to return [xginN,xgacN,AllGenesVecN,xmN,vTC]
 
 
+    try:
+        xoutS[1,0]
+        x_ind = 1
+
+    except:
+        x_ind=0
+
+
+
+
     Vn = dataG.Vn
 
     mpc2nmcf_Vn=1E9/(Vn*6.023E+23);
@@ -56,14 +66,14 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     TRs=np.zeros(shape = (numberofgenes,numberofTARs));
 
     # TARs
-    pcFos_cJun=xoutS[0,684]; #1
+    pcFos_cJun=xoutS[x_ind,684]; #1
 
-    cMyc=xoutS[0,685]; #2
-    p53ac=xoutS[0,2]; #3
-    FOXOnuc=xoutS[0,767]; #4
-    ppERKnuc=xoutS[0,675]; #5
-    pRSKnuc=xoutS[0,678]; #6
-    bCATENINnuc=xoutS[0,686]; #7
+    cMyc=xoutS[x_ind,685]; #2
+    p53ac=xoutS[x_ind,2]; #3
+    FOXOnuc=xoutS[x_ind,767]; #4
+    ppERKnuc=xoutS[x_ind,675]; #5
+    pRSKnuc=xoutS[x_ind,678]; #6
+    bCATENINnuc=xoutS[x_ind,686]; #7
 
     # activators
 
@@ -85,8 +95,13 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # # repressors
     TRs[97,0]=pcFos_cJun;
-    TRs=TRs*(1/mpc2nmcf_Vn);
 
+    # print(pcFos_cJun)
+
+    # TODO - problem in pcFos_cJun
+
+
+    TRs=TRs*(1/mpc2nmcf_Vn);
 
 
 
@@ -99,6 +114,8 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     TFr=(TRs/tck50rs)**tcnrs;
     TFr[np.isnan(TFr)]=0;
     hills = np.sum(TFa,axis=1)/(1 + np.sum(TFa,axis=1) + np.sum(TFr,axis=1))
+
+
 
 
 
@@ -119,13 +136,26 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     induced=np.multiply(np.multiply(xgac,kTCmaxs),hills);
 
+    # print(xgac[97])
+    # print(kTCmaxs[97])
+    # print(hills[97])
+
+    # problem in hills[97]
+
+
+
 
 
     leak= np.multiply(xgac,kTCleak);
 
 
+
+
     vTC=leak+induced;
 
+    # print(leak[97])
+    # print(induced[97])
+    # problem in induced[97]
 
 
 
@@ -224,6 +254,9 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # # % OUTPUT deterministic results instead:
 
+
+
+
     if flagD:
         Nb=vTC*ts;
         Nd=vTCd*ts;
@@ -232,9 +265,18 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
 
 
+
     # # % Finish mRNA
     xmN=xm+Nb-Nd;
     xmN[xmN<0]=0;
+
+    # print(xm[97])
+    # print(Nb[97])
+    # # problem in Nb[97]
+    #
+    # print(Nd[97])
+
+
 
 
     return [xginN,xgacN,AllGenesVecN,xmN,vTC]

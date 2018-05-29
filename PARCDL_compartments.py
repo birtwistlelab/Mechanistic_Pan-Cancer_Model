@@ -584,8 +584,11 @@ def PARCDL_compartments(flagOUT,Vc,Ve,Vm,Vn,S_d):
     # VvR **
         VvR = np.zeros(shape=(158))
 
+
+
+
         VvR[0:158]=Vc;
-        VvR[[1-1,7-1,13-1,21-1,25-1,31-1,35-1,43-1,47-1,53-1,57-1,63-1,73-1,77-1,81-1,87-1,92-1,123-1,125-1,127-1,129-1,131-1,133-1,135-1,137-1,139-1,141-1,151-1,153-1,155-1,157]]=Ve;
+        VvR[[1-1,7-1,13-1,21-1,25-1,31-1,35-1,43-1,47-1,53-1,57-1,63-1,73-1,77-1,81-1,87-1,92-1,123-1,125-1,127-1,129-1,131-1,133-1,135-1,137-1,139-1,141-1,151-1,153-1,155-1,157-1]]=Ve;
         # looks weird because used search and replace to subtract 1 to fix matlab indices
 
 
@@ -960,6 +963,8 @@ def PARCDL_compartments(flagOUT,Vc,Ve,Vm,Vn,S_d):
         Vv = np.append(Vv,VvDP)
         Vv = np.append(Vv,VvPA)
         Vv = np.append(Vv,np.matrix.transpose(VvXd))
+
+
 
 
 
