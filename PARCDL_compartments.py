@@ -257,7 +257,7 @@ def PARCDL_compartments(flagOUT,Vc,Ve,Vm,Vn,S_d):
         VxP[124-1]=Vc;
         VxP[125-1]=Vc;
         VxP[126-1]=Vn;#FOXOnuc
-        VxP[127:130]=Vc;
+        VxP[127-1:130]=Vc;
 
 
 
@@ -285,6 +285,9 @@ def PARCDL_compartments(flagOUT,Vc,Ve,Vm,Vn,S_d):
         Vx = np.matrix(Vx)
 
         Vx = np.matrix.transpose(Vx)
+
+
+
 
 
 
@@ -889,7 +892,7 @@ def PARCDL_compartments(flagOUT,Vc,Ve,Vm,Vn,S_d):
         VvP[184-1]=Vc;
         VvP[185-1]=Vc;
         VvP[186-1]=Vc;
-        VvP[187:190]=Vc;
+        VvP[187-1:190]=Vc;
 
 
     # VvDA **
@@ -966,6 +969,9 @@ def PARCDL_compartments(flagOUT,Vc,Ve,Vm,Vn,S_d):
 
 
 
+        # to_measure = [VvbR,VvdR,VvTL,VvTLCd,VvE,VvD,VvC,VvA,VvR,VvRP1,VvRP2,VvRP3,VvRP4,VvRP5,VvRP6,VvRP7,VvRP8,VvRP9,VvRP10,VvRP11,VvRP12,VvRP13,VvRP14,VvRP15,VvRP16,VvRP17,VvRP18,VvRP19,VvRP20,VvRP21,VvRP22,VvRP23,VvRP24,VvRP25,VvRP26,VvRP27,VvRP28,VvRP29,VvRP30,VvRP31,VvRP32,VvRP33,VvRP34,VvP,VvDP,VvPA,VvXd]
+
+
 
 
         real_Vv = np.array([])
@@ -980,6 +986,10 @@ def PARCDL_compartments(flagOUT,Vc,Ve,Vm,Vn,S_d):
         real_Vv = np.matrix(real_Vv)
 
         real_Vv = np.matrix.transpose(real_Vv)
+
+
+
+
 
 
     return [Vx,real_Vv,VxTL]
