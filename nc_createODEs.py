@@ -8,6 +8,13 @@ from assimulo.problem import Explicit_Problem
 
 
 class MyProblem(Explicit_Problem):
+
+
+    # NOTE - the format of this file is super weird..... basically i had to extend the assimulo Explicit_Problem class and write the ODEs and jacobian matrix straight into it
+    # this is the only way i could get assimulo to work with the dataS object being fed into the ODEs with each iteration
+
+
+
     def __init__(self, y0,dataS, Jeval774):
         Explicit_Problem.__init__(self,y0=y0)
         self.dataS = dataS

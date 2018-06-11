@@ -1,7 +1,7 @@
 
 
 import pandas
-import sys
+# import sys
 import numpy as np
 from CalcVolumeParams import *
 from PARCDL_rateconstants_main import *
@@ -27,7 +27,7 @@ def RunPrep():
 
 
     # Model Essentials
-    ts = 30 #Timestep for simulations
+    ts = 30 #Timestep for simulations, in seconds
 
 
     # General params

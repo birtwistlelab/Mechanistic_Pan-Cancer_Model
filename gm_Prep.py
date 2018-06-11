@@ -1,10 +1,10 @@
 # gm_Prep.py
 
-import sys
+# import sys
 import numpy as np
 
 
-# had to write this myself because matlab doesn't have it
+# had to write this myself
 def sample_without_replacement(lower_bound, upper_bound, size):
     import numpy as np
     sample = []
@@ -16,8 +16,6 @@ def sample_without_replacement(lower_bound, upper_bound, size):
             sample.append(draw)
             i = i + 1
     return(sample)
-
-
 
 
 def gm_Prep(mExp_mpc,gExp_mpc,kTCd,kGac,kGin,numberofgenes):

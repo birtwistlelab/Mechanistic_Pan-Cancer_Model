@@ -8,6 +8,9 @@ from numba import jit, njit
 from scipy.integrate import odeint
 
 
+
+# NOTE - this file is just used for debugging the ODEs, and is not actually called by the model (which calls nc_createODEs.py)
+
 # @jit(nopython=True)
 def createODEs(x,t,data0,data1,data2,data3,data4,data5,data6):
 

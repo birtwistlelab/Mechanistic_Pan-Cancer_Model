@@ -1,6 +1,6 @@
 
 import numpy as np
-import sys
+# import sys
 import scipy.stats
 from random import *
 
@@ -8,6 +8,8 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     # going to return [xginN,xgacN,AllGenesVecN,xmN,vTC]
 
 
+
+    # important.....avoids doubling the first element of xoutG
     try:
         xoutS[1,0]
         x_ind = 1
@@ -78,12 +80,7 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     # activators
 
     TAs[9:12,0] = pcFos_cJun
-
-
-
-
     TAs[98,0] = pcFos_cJun
-
     TAs[9:12,1]=cMyc;
     TAs[[25,52,53],2]=p53ac;
     TAs[[54,57,58,59,60,62,64,65,126,127,135,139],3]=FOXOnuc;
@@ -95,12 +92,6 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # # repressors
     TRs[97,0]=pcFos_cJun;
-
-    # print(pcFos_cJun)
-
-    # TODO - problem in pcFos_cJun
-
-
     TRs=TRs*(1/mpc2nmcf_Vn);
 
 
@@ -122,7 +113,6 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # With AP1*cMYC exception:
     # hills(10:12)=(TFa(10:12,1)./      (1+TFa(10:12,1))) .*    (TFa(10:12,2)./(1+TFa(10:12,2)));
-
     hills[9:12]= np.multiply((TFa[9:12,0]/(1+TFa[9:12,0])),(TFa[9:12,1]/(1+TFa[9:12,1])));
     # so many parenthese :-/
 
@@ -133,41 +123,16 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     hills = np.matrix(hills)
     hills = np.matrix.transpose(hills)
-
     induced=np.multiply(np.multiply(xgac,kTCmaxs),hills);
-
-    # print(xgac[97])
-    # print(kTCmaxs[97])
-    # print(hills[97])
-
-    # problem in hills[97]
-
-
-
 
 
     leak= np.multiply(xgac,kTCleak);
 
 
-
-
     vTC=leak+induced;
-
-    # print(leak[97])
-    # print(induced[97])
-    # problem in induced[97]
-
-
-
-
-
-
 
     # vTCd
     vTCd= np.multiply(np.matrix.transpose(np.matrix(kTCd)),xm);
-
-
-
 
 
     try:
@@ -226,13 +191,8 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # # mRNA
 
-
-
     Nb=np.random.poisson(vTC*ts);
     Nd=np.random.poisson(vTCd*ts);
-
-
-
 
 
 
@@ -240,23 +200,15 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     # # Nb(indsD)=vTC(indsD)*ts;
     Nb[indsD]=vTC[indsD]*ts;
 
-
-
     Nd[indsD]=vTCd[indsD]*ts;
 
     xgacN[indsD]=xoutG[indsD];
-
-
 
     xginN[indsD]=xoutG[indsD+numberofgenes];
 
 
 
     # # % OUTPUT deterministic results instead:
-
-
-
-
     if flagD:
         Nb=vTC*ts;
         Nd=vTCd*ts;
@@ -269,14 +221,5 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
     # # % Finish mRNA
     xmN=xm+Nb-Nd;
     xmN[xmN<0]=0;
-
-    # print(xm[97])
-    # print(Nb[97])
-    # # problem in Nb[97]
-    #
-    # print(Nd[97])
-
-
-
 
     return [xginN,xgacN,AllGenesVecN,xmN,vTC]

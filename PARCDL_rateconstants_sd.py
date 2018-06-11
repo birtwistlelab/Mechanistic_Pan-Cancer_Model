@@ -1,7 +1,7 @@
 import math
 import csv
 import numpy as np
-import sys
+# import sys
 
 
 
@@ -60,7 +60,7 @@ def PARCDL_rateconstants_sd(ke50,mExp_mpc,kTLnat,kTLd,EIF4Efree,S_TL,S_d):
 
 
 
-    # important - the setting dimension to 2 in matlab is the same as setting axis to 1 in numpy.... i think. sums by row instead of by column
+    # important - the setting dimension to 2 in matlab is the same as setting axis to 1 in numpy. sums by row instead of by column
     inds = np.nonzero(np.sum(S_TL,axis=1))[0]
 
     inds0 = np.matrix.transpose(inds)
