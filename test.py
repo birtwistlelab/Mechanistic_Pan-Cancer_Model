@@ -1,22 +1,5 @@
 # testing file
 
-
-
-# TODO
-# Fig. 3F (stochastic)
-# Fig. 3H (stochastic)
-# Fig. 4A
-# Fig. 5A
-# Fig. 6B
-
-
-
-
-
-
-
-
-
 import numpy as np
 from RunPrep import *
 from RunModel import *
