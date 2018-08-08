@@ -2,7 +2,7 @@
 
 Hey, thanks for downloading the Mechanistic Pan-Cancer Model!
 
-Ny name is Mike Saint-Antoine, and I wrote the Python code for the model (translating it from the original Matlab version).
+My name is Mike Saint-Antoine, and I wrote the Python code for the model (translating it from the original Matlab version).
 If you have any questions about how the code works, you can reach me at mikest@udel.edu.
 If you have any questions about the actual biology of the model, I probably won't be able to answer those since I only translated the code and don't know much about the biology behind it.
 But you could try contacting Marc Birtwistle or Mehdi Bouhaddou (the original creator of the Matlab model) with those questions.
