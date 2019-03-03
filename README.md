@@ -16,14 +16,14 @@ To run this workflow as a PBS script, start by running the following commands:
 3. Create a virtual envionment with 'conda create -n my\_env python=3.6'
 4. Give yourself access to sundials and assimulo with 'conda config --append channels conda-forge'
 5. Install your dependencies
-	i. 'conda install matplotlib'
-	ii. 'conda install pandas'
-	iii. 'conda install scipy'
-	iv. 'conda install sundials'
-	v. 'conda install sundials'
-	vi. 'conda install assimulo'
- 	vii. 'conda install xlrd'
-	iix. 'conda install numpy'
+  i. 'conda install matplotlib'
+  ii. 'conda install pandas'
+  iii. 'conda install scipy'
+  iv. 'conda install sundials'
+  v. 'conda install sundials'
+  vi. 'conda install assimulo'
+  vii. 'conda install xlrd'
+  viii. 'conda install numpy'
 6. Create a file to run as a job
 7. At the top of your program, make PBS your interpreter with '#PBS -l select=4:ncpus=4:mem=8gb,walltime=4:00:00'
 9. For debugging purposes, check your python version in the next line with 'python -V'
@@ -83,7 +83,7 @@ However, you could write "STIM [83] = 0.00385" instead and get the same result. 
 
 "[t, xoutG, xoutS] = RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, dataG.kTCleak, dataG.kTCmaxs)" calls the model and passes in the parameters.
 
-** Important!!! **
+**Important!!!**
 In this example we're passing in dataG.kTCleak and dataG.kTCmaxs, which are the kTCleak and kTCmaxs generated in RunPrep.
 However, we could also choose to pass in empty arrays here, like this:
 "[t, xoutG, xoutS] = RunModel(flagD, th, STIM, xoutS, xoutG, dataS, dataG, [], [])"
