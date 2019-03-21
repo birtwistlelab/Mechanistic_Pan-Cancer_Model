@@ -12,9 +12,9 @@ from Jeval774 import Jeval774
 from assimulo.solvers import CVode
 from assimulo.problem import Explicit_Problem
 
+import sys
 
-
-np.set_printoptions(threshold=np.nan)
+np.set_printoptions(threshold=sys.maxsize)
 
 
 
