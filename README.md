@@ -7,31 +7,57 @@ If you have any questions about how the code works, you can reach me at mikest@u
 If you have any questions about the actual biology of the model, I probably won't be able to answer those since I only translated the code and don't know much about the biology behind it.
 But you could try contacting Marc Birtwistle or Mehdi Bouhaddou (the original creator of the Matlab model) with those questions.
 
+## Install instructions
+
+To install with Conda:
+
+1. Create a conda environment called `mpcmodel`:
+
+   ```
+   $ conda create -n mpcmodel python=3.6
+   ```
+
+2. Activate the environment and install the necessary packages into it:
+
+   ```
+   $ source activate mpcmodel
+   $ conda install -c conda-forge "blas=*=openblas" numpy scipy pandas matplotlib xlrd
+   $ conda install -c conda-forge sundials==3.1 assimulo
+   ```
+
+3. Run the test case:
+
+   ```
+   $ python test2.py
+   ```
 
 ## Palmetto Instructions ##
-To run this workflow as a PBS script, start by running the following commands:
 
-1. Load python3 by adding the command 'module add python/3.4'
-2. Load anaconda with the command 'module add anaconda3/2.5.0'
-3. Create a virtual envionment with 'conda create -n my\_env python=3.6'
-4. Give yourself access to sundials and assimulo with 'conda config --append channels conda-forge'
-5. Install your dependencies
-	5.1. 'conda install matplotlib'
-	5.2. 'conda install pandas'
-	5.3. 'conda install scipy'
-	5.4. 'conda install sundials'
-	5.5. 'conda install sundials'
-	5.6. 'conda install assimulo'
-	5.7. 'conda install xlrd'
-	5.8. 'conda install numpy'
-6. Create a file to run as a job
-7. At the top of your program, make PBS your interpreter with '#PBS -l select=4:ncpus=4:mem=8gb,walltime=4:00:00'
-9. For debugging purposes, check your python version in the next line with 'python -V'
-9. Change to your current working directory by adding 'cd $PBS\_O\_WORKDIR'
-10. Activate your virtual environment (where you have your dependencies) with 'source activate my\_env'
-11. Run the model with the line 'python test2.py'
-12. Run the job by exiting the file and running it with qsub
- 
+To run this workflow as a PBS script:
+
+1. Create the following PBS script in the project directory (call it `mpcmodel.pbs` or anything you like):
+
+   ```
+   #PBS -l select=1:ncpus=4:mem=8gb,walltime=4:00:00
+
+   module load anaconda3/5.1.0
+
+   source activate mpcmodel
+
+   cd $PBS_O_WORKDIR
+
+   python -v
+
+   python test2.py
+   ```
+
+2. Submit it by first navigating to the project directory, and then running `qsub`:
+
+   ```
+   $ cd /path/to/Mechanistic_Pan-Cancer_Model
+   $ qsub mpcmodel.pbs
+   ```
+
 ## Running Simulations ##
 
 To start running simulations, you only need to run either test.py or test2.py as shown above. Everything else will be called from those files. Of course, you can also make your own file to start running simulations from.
