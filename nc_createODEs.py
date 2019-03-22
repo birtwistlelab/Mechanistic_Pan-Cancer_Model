@@ -1577,9 +1577,6 @@ class MyProblem(Explicit_Problem):
         vRP34[13]=np.multiply(kRP34[13],pIIrIrI_int_IRS);
         vRP34[14]=ps_IRS * np.multiply(np.multiply(np.multiply(fac,kRP34[14]),pIN_Isr_Isr_IN_int),IRS);
         vRP34[15]=np.multiply(kRP34[15],pIN_Isr_Isr_IN_int_IRS);
-        vRP34= np.matrix.transpose(vRP34)
-
-
 
         # ## vP **
         vP = np.zeros(shape=(190))
@@ -1824,7 +1821,7 @@ class MyProblem(Explicit_Problem):
 
 
         # ## vAd
-        Ads= np.matrix([L_R,
+        Ads= np.array([L_R,
         Ractive,
         Ractive_flip,
         Ractive_pC8,
@@ -1872,10 +1869,7 @@ class MyProblem(Explicit_Problem):
         pBAD,
         ppERK_BAD]);
 
-        Ads = np.matrix.transpose(Ads)
-
-
-        Rds= np.matrix([pE1,
+        Rds= np.array([pE1,
         pE2,
         pE4,
         E1E1,
@@ -1932,14 +1926,9 @@ class MyProblem(Explicit_Problem):
         E2_ppERK,
         E4_ppERK]);
 
-        Rds = np.matrix.transpose(Rds)
-
-
-
-
         RPds=xRP;
 
-        Pds= np.matrix([G2_SOS,
+        Pds= np.array([G2_SOS,
         G2_pSOS,
         PI3K1,
         pPI3K1,
@@ -2029,49 +2018,21 @@ class MyProblem(Explicit_Problem):
         MEKi_ppMEK,
         AKTi_AKT]);
 
-        Pds = np.matrix.transpose(Pds)
-
-
-
-        to_flatten = [Ads,Rds,RPds,Pds]
-
-
-
-
-        Xds = np.array([])
-
-        for item in to_flatten:
-            Xds = np.append(Xds,item)
-
+        Xds = np.concatenate([Ads,Rds,RPds,Pds])
 
         vXd= np.multiply(kXd,Xds);
 
 
-
         # ## PUTTING IT TOGETHER  ##
-
-        to_flatten = [vRP1,vRP2,vRP3,vRP4,vRP5,vRP6,vRP7,vRP8,vRP9,vRP10,vRP11,vRP12,vRP13,vRP14,vRP15,vRP16,vRP17,vRP18,vRP19,vRP20,vRP21,vRP22,vRP23,vRP24,vRP25,vRP26,vRP27,vRP28,vRP29,vRP30,vRP31,vRP32,vRP33,vRP34]
-
-
-        vRP = np.array([])
-
-        for item in to_flatten:
-            vRP = np.append(vRP,item)
+        vRP = np.concatenate([vRP1,vRP2,vRP3,vRP4,vRP5,vRP6,vRP7,vRP8,vRP9,vRP10,vRP11,vRP12,vRP13,vRP14,vRP15,vRP16,vRP17,vRP18,vRP19,vRP20,vRP21,vRP22,vRP23,vRP24,vRP25,vRP26,vRP27,vRP28,vRP29,vRP30,vRP31,vRP32,vRP33,vRP34])
 
 
         # v=[vbR;vdR;vTL;vTLCd';vE';vD';vC';vA';vR';vRP;vP';vDP';vPA';vXd];
-        v_temp = [vbR,vdR,vTL,np.matrix.transpose(vTLCd),np.matrix.transpose(vE),np.matrix.transpose(vD),np.matrix.transpose(vC),np.matrix.transpose(vA),np.matrix.transpose(vR),vRP,np.matrix.transpose(vP),np.matrix.transpose(vDP),np.matrix.transpose(vPA),vXd]
-
-
-        v = np.array([])
-
-        for item in v_temp:
-            v = np.append(v,item)
+        v = np.concatenate([vbR,vdR,vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd])
 
 
         v = v[0:2448]
         # getting rid of two 0s on the end to get the sizes to match
-
 
 
         ndot= np.dot(S_PARCDL, v*(VvPARCDL*1E12))
@@ -2090,14 +2051,5 @@ class MyProblem(Explicit_Problem):
         ydot[np.isnan(ydot)] = 0
 
 
+        return ydot[0:774]
 
-        # return ydot[0:774,0]
-
-        to_return = []
-        for i in range(0,774):
-            to_return.append(ydot[i])
-
-
-
-
-        return to_return
