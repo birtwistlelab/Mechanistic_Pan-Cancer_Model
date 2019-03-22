@@ -37,8 +37,8 @@ class MyProblem(Explicit_Problem):
 
         # # unpacking
         kS=data.kS;
-        VvPARCDL=data.VvPARCDL;
-        VxPARCDL=data.VxPARCDL;
+        VvPARCDL=np.asarray(data.VvPARCDL).ravel()
+        VxPARCDL=np.asarray(data.VxPARCDL).ravel()
         S_PARCDL=np.asarray(data.S_PARCDL)
         mExp_nM=data.mExp_nM;
         mMod=data.mMod;
@@ -2069,22 +2069,15 @@ class MyProblem(Explicit_Problem):
             v = np.append(v,item)
 
 
-        v = np.matrix(v);
-        v = np.matrix.transpose(v)
-
-
-        v = v[0:2448,:]
+        v = v[0:2448]
         # getting rid of two 0s on the end to get the sizes to match
 
 
 
-        ndot= np.dot(S_PARCDL, (np.multiply(v,(VvPARCDL*1E12))))
-
+        ndot= np.dot(S_PARCDL, v*(VvPARCDL*1E12))
 
 
         temp = S_PARCDL[772,:]
-
-
 
 
         ydot=ndot/(VxPARCDL*1E12);
@@ -2102,7 +2095,7 @@ class MyProblem(Explicit_Problem):
 
         to_return = []
         for i in range(0,774):
-            to_return.append(ydot[i,0])
+            to_return.append(ydot[i])
 
 
 
