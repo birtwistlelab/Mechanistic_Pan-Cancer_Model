@@ -4,7 +4,7 @@
 import numpy as np
 from assimulo.problem import Explicit_Problem
 
-
+from numba import jit
 
 
 class MyProblem(Explicit_Problem):
@@ -46,6 +46,7 @@ class MyProblem(Explicit_Problem):
 
         return _rhs(t, x, kS, VvPARCDL, VxPARCDL, S_PARCDL, mExp_nM, mMod, flagE)
 
+#@jit(cache=True, nopython=True)
 def _rhs(t, x,
             kS,
             VvPARCDL,
@@ -403,8 +404,8 @@ def _rhs(t, x,
     pSCDint = xRP[a:a+29]; a=a+33;#[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint,pIIrIIrint];
 
 
-    pSCD_bind = np.append(xRP[0:25],xRP[29:33]); #[pEE1E2,pEE1Ev3,pEE1E1,pEE1EE1,pEE1E3,pEE1HE3,pEE1E4,pEE1HE4,pE2HE3,pHE3Ev3,pE1HE3,pHE3E4,pHE3HE4,pE2HE4,pHE4Ev3,pE1HE4,pE3HE4,pHE4E4,pHE4HE4,pHGF_Met_Met,pHGF_Met_HGF_Met,pPPrPPr,pPPrPr,pFFrFFr,pFFrFr,pIIrIr_IRS,pIIrIIr_IRS]; #Same as pSCD but with the IRS on the IGF1R. Had to do this because it has an extra step (binding of IRS)
-    pSCDint_bind = np.append(xRP[91:116],xRP[120:124]); #[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint_IRS,pIIrIIrint_IRS];
+    pSCD_bind = np.concatenate((xRP[0:25],xRP[29:33])) #[pEE1E2,pEE1Ev3,pEE1E1,pEE1EE1,pEE1E3,pEE1HE3,pEE1E4,pEE1HE4,pE2HE3,pHE3Ev3,pE1HE3,pHE3E4,pHE3HE4,pE2HE4,pHE4Ev3,pE1HE4,pE3HE4,pHE4E4,pHE4HE4,pHGF_Met_Met,pHGF_Met_HGF_Met,pPPrPPr,pPPrPr,pFFrFFr,pFFrFr,pIIrIr_IRS,pIIrIIr_IRS]; #Same as pSCD but with the IRS on the IGF1R. Had to do this because it has an extra step (binding of IRS)
+    pSCDint_bind = np.concatenate((xRP[91:116],xRP[120:124])) #[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint_IRS,pIIrIIrint_IRS];
 
 
 
@@ -900,9 +901,9 @@ def _rhs(t, x,
 
     # # Cell Cycle Mods
     kTL[5]=vsprb/mExp_nM[5]*rhs*eps;
-    kTL[6:9]=vse2f/sum(mExp_nM[6:9])*rhs*eps;
-    kTL[9:12]=(kcd1+kcd2*E2F*(Ki7/(Ki7+pRB))*(Ki8/(Ki8+pRBp)))/sum(mExp_nM[9:12])*rhs*eps;
-    kTL[12:14]=kce*E2F*(Ki9/(Ki9+pRB))*(Ki10/(Ki10+pRBp))/sum(mExp_nM[12:14])*rhs*eps;
+    kTL[6:9]=vse2f/np.sum(mExp_nM[6:9])*rhs*eps;
+    kTL[9:12]=(kcd1+kcd2*E2F*(Ki7/(Ki7+pRB))*(Ki8/(Ki8+pRBp)))/np.sum(mExp_nM[9:12])*rhs*eps;
+    kTL[12:14]=kce*E2F*(Ki9/(Ki9+pRB))*(Ki10/(Ki10+pRBp))/np.sum(mExp_nM[12:14])*rhs*eps;
     kTL[14]=vsskp2/mExp_nM[14]*rhs*eps;
     kTL[15]=vspei/mExp_nM[15]*rhs*eps;
     kTL[16]=vspai/mExp_nM[16]*rhs*eps;
@@ -922,7 +923,7 @@ def _rhs(t, x,
 
 
     avgktl=np.mean(kTLd[28:30]);
-    summExp=sum(mExp_nM[28:30]);
+    summExp=np.sum(mExp_nM[28:30]);
     kTLcdk4tot=(cdk4tot/summExp)*avgktl;
     cdk4tot=(kTLcdk4tot*summExp)/avgktl;
 
@@ -2014,17 +2015,17 @@ def _rhs(t, x,
     MEKi_ppMEK,
     AKTi_AKT]);
 
-    Xds = np.concatenate([Ads,Rds,RPds,Pds])
+    Xds = np.concatenate((Ads,Rds,RPds,Pds))
 
     vXd= np.multiply(kXd,Xds);
 
 
     # ## PUTTING IT TOGETHER  ##
-    vRP = np.concatenate([vRP1,vRP2,vRP3,vRP4,vRP5,vRP6,vRP7,vRP8,vRP9,vRP10,vRP11,vRP12,vRP13,vRP14,vRP15,vRP16,vRP17,vRP18,vRP19,vRP20,vRP21,vRP22,vRP23,vRP24,vRP25,vRP26,vRP27,vRP28,vRP29,vRP30,vRP31,vRP32,vRP33,vRP34])
+    vRP = np.concatenate((vRP1,vRP2,vRP3,vRP4,vRP5,vRP6,vRP7,vRP8,vRP9,vRP10,vRP11,vRP12,vRP13,vRP14,vRP15,vRP16,vRP17,vRP18,vRP19,vRP20,vRP21,vRP22,vRP23,vRP24,vRP25,vRP26,vRP27,vRP28,vRP29,vRP30,vRP31,vRP32,vRP33,vRP34))
 
 
     # v=[vbR;vdR;vTL;vTLCd';vE';vD';vC';vA';vR';vRP;vP';vDP';vPA';vXd];
-    v = np.concatenate([vbR,vdR,vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd])
+    v = np.concatenate((vbR,vdR,vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd))
 
 
     v = v[0:2448]
