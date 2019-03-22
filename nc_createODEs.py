@@ -39,7 +39,7 @@ class MyProblem(Explicit_Problem):
         kS=data.kS;
         VvPARCDL=data.VvPARCDL;
         VxPARCDL=data.VxPARCDL;
-        S_PARCDL=data.S_PARCDL;
+        S_PARCDL=np.asarray(data.S_PARCDL)
         mExp_nM=data.mExp_nM;
         mMod=data.mMod;
         flagE=data.flagE;
@@ -388,10 +388,7 @@ class MyProblem(Explicit_Problem):
 
         # ## xRP **
         a=0;
-        SCD = [EE1E2,EE1Ev3,EE1E1,EE1EE1,EE1E3,EE1HE3,EE1E4,EE1HE4,E2HE3,HE3Ev3,E1HE3,HE3E4,HE3HE4,E2HE4,HE4Ev3,E1HE4,E3HE4,HE4E4,HE4HE4,HGF_Met_Met,HGF_Met_HGF_Met,PPrPPr,PPrPr,FFrFFr,FFrFr,IIrIr,IN_Isr_Isr,IIrIrI,IN_Isr_Isr_IN];
-        SCD = np.array(SCD)
-
-
+        SCD = np.array([EE1E2,EE1Ev3,EE1E1,EE1EE1,EE1E3,EE1HE3,EE1E4,EE1HE4,E2HE3,HE3Ev3,E1HE3,HE3E4,HE3HE4,E2HE4,HE4Ev3,E1HE4,E3HE4,HE4E4,HE4HE4,HGF_Met_Met,HGF_Met_HGF_Met,PPrPPr,PPrPr,FFrFFr,FFrFr,IIrIr,IN_Isr_Isr,IIrIrI,IN_Isr_Isr_IN])
 
 
         pSCD = xRP[a:a+29]; a=a+33;
@@ -2081,7 +2078,7 @@ class MyProblem(Explicit_Problem):
 
 
 
-        ndot=S_PARCDL * (np.multiply(v,(VvPARCDL*1E12)));
+        ndot= np.dot(S_PARCDL, (np.multiply(v,(VvPARCDL*1E12))))
 
 
 
