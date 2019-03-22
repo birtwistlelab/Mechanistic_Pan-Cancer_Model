@@ -6,4 +6,4 @@ echo "----"
 echo "Expect:"
 cat md5sums.txt
 
-rm t_deterministic.csv rm xoutG_deterministic.csv xoutS_deterministic.csv
+rm -f t_deterministic.csv xoutG_deterministic.csv xoutS_deterministic.csv
