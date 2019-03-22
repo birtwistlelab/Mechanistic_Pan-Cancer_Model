@@ -58,22 +58,22 @@ def _rhs(t, x,
 
     # k
     a=0;
-    u=1;Rt=kS[a:a+u];a=a+u;
-    u=1;EIF4Efree=kS[a:a+u];a=a+u;
-    u=1;Vc=kS[a:a+u];a=a+u;
-    u=1;Ve=kS[a:a+u];a=a+u;
-    u=1;Vm=kS[a:a+u];a=a+u;
-    u=1;Vn=kS[a:a+u];a=a+u;
-    u=1;kT1=kS[a:a+u];a=a+u;
-    u=1;kT2=kS[a:a+u];a=a+u;
-    u=1;kT3=kS[a:a+u];a=a+u;
-    u=1;kT4=kS[a:a+u];a=a+u;
-    u=1;k50E=kS[a:a+u];a=a+u;
-    u=1;kbR0=kS[a:a+u];a=a+u;
-    u=1;kbRi=kS[a:a+u];a=a+u;
-    u=1;kdR0=kS[a:a+u];a=a+u;
-    u=1;nR=kS[a:a+u];a=a+u;
-    u=1;k50R=kS[a:a+u];a=a+u;
+    u=1;Rt=kS[a];a=a+u;
+    u=1;EIF4Efree=kS[a];a=a+u;
+    u=1;Vc=kS[a];a=a+u;
+    u=1;Ve=kS[a];a=a+u;
+    u=1;Vm=kS[a];a=a+u;
+    u=1;Vn=kS[a];a=a+u;
+    u=1;kT1=kS[a];a=a+u;
+    u=1;kT2=kS[a];a=a+u;
+    u=1;kT3=kS[a];a=a+u;
+    u=1;kT4=kS[a];a=a+u;
+    u=1;k50E=kS[a];a=a+u;
+    u=1;kbR0=kS[a];a=a+u;
+    u=1;kbRi=kS[a];a=a+u;
+    u=1;kdR0=kS[a];a=a+u;
+    u=1;nR=kS[a];a=a+u;
+    u=1;k50R=kS[a];a=a+u;
     u=141;kTL=kS[a:a+u];a=a+u;
     u=141;kTLd=kS[a:a+u];a=a+u;
     u=102;kTLCd=kS[a:a+u];a=a+u;
@@ -404,8 +404,8 @@ def _rhs(t, x,
     pSCDint = xRP[a:a+29]; a=a+33;#[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint,pIIrIIrint];
 
 
-    pSCD_bind = np.concatenate((xRP[0:25],xRP[29:33])) #[pEE1E2,pEE1Ev3,pEE1E1,pEE1EE1,pEE1E3,pEE1HE3,pEE1E4,pEE1HE4,pE2HE3,pHE3Ev3,pE1HE3,pHE3E4,pHE3HE4,pE2HE4,pHE4Ev3,pE1HE4,pE3HE4,pHE4E4,pHE4HE4,pHGF_Met_Met,pHGF_Met_HGF_Met,pPPrPPr,pPPrPr,pFFrFFr,pFFrFr,pIIrIr_IRS,pIIrIIr_IRS]; #Same as pSCD but with the IRS on the IGF1R. Had to do this because it has an extra step (binding of IRS)
-    pSCDint_bind = np.concatenate((xRP[91:116],xRP[120:124])) #[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint_IRS,pIIrIIrint_IRS];
+    pSCD_bind = np.hstack((xRP[0:25],xRP[29:33])) #[pEE1E2,pEE1Ev3,pEE1E1,pEE1EE1,pEE1E3,pEE1HE3,pEE1E4,pEE1HE4,pE2HE3,pHE3Ev3,pE1HE3,pHE3E4,pHE3HE4,pE2HE4,pHE4Ev3,pE1HE4,pE3HE4,pHE4E4,pHE4HE4,pHGF_Met_Met,pHGF_Met_HGF_Met,pPPrPPr,pPPrPr,pFFrFFr,pFFrFr,pIIrIr_IRS,pIIrIIr_IRS]; #Same as pSCD but with the IRS on the IGF1R. Had to do this because it has an extra step (binding of IRS)
+    pSCDint_bind = np.hstack((xRP[91:116],xRP[120:124])) #[pEE1E2int,pEE1Ev3int,pEE1E1int,pEE1EE1int,pEE1E3int,pEE1HE3int,pEE1E4int,pEE1HE4int,pE2HE3int,pHE3Ev3int,pE1HE3int,pHE3E4int,pHE3HE4int,pE2HE4int,pHE4Ev3int,pE1HE4int,pE3HE4int,pHE4E4int,pHE4HE4int,pHGF_Met_Metint,pHGF_Met_HGF_Metint,pPPrPPrint,pPPrPrint,pFFrFFrint,pFFrFrint,pIIrIrint_IRS,pIIrIIrint_IRS];
 
 
 
@@ -2015,17 +2015,17 @@ def _rhs(t, x,
     MEKi_ppMEK,
     AKTi_AKT]);
 
-    Xds = np.concatenate((Ads,Rds,RPds,Pds))
+    Xds = np.hstack((Ads,Rds,RPds,Pds))
 
     vXd= np.multiply(kXd,Xds);
 
 
     # ## PUTTING IT TOGETHER  ##
-    vRP = np.concatenate((vRP1,vRP2,vRP3,vRP4,vRP5,vRP6,vRP7,vRP8,vRP9,vRP10,vRP11,vRP12,vRP13,vRP14,vRP15,vRP16,vRP17,vRP18,vRP19,vRP20,vRP21,vRP22,vRP23,vRP24,vRP25,vRP26,vRP27,vRP28,vRP29,vRP30,vRP31,vRP32,vRP33,vRP34))
+    vRP = np.hstack((vRP1,vRP2,vRP3,vRP4,vRP5,vRP6,vRP7,vRP8,vRP9,vRP10,vRP11,vRP12,vRP13,vRP14,vRP15,vRP16,vRP17,vRP18,vRP19,vRP20,vRP21,vRP22,vRP23,vRP24,vRP25,vRP26,vRP27,vRP28,vRP29,vRP30,vRP31,vRP32,vRP33,vRP34))
 
 
     # v=[vbR;vdR;vTL;vTLCd';vE';vD';vC';vA';vR';vRP;vP';vDP';vPA';vXd];
-    v = np.concatenate((vbR,vdR,vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd))
+    v = np.hstack((vbR,vdR,vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd))
 
 
     v = v[0:2448]
