@@ -33,9 +33,6 @@ class MyProblem(Explicit_Problem):
     def rhs(self,t,x):
 
         # returns [ydot,flag,newdata,v]
-
-
-
         data = self.dataS
 
         # # unpacking
@@ -47,6 +44,16 @@ class MyProblem(Explicit_Problem):
         mMod=data.mMod;
         flagE=data.flagE;
 
+        return self._rhs(t, x, kS, VvPARCDL, VxPARCDL, S_PARCDL, mExp_nM, mMod, flagE)
+
+    def _rhs(self, t, x,
+             kS,
+             VvPARCDL,
+             VxPARCDL,
+             S_PARCDL,
+             mExp_nM,
+             mMod,
+             flagE):
 
         # k
         a=0;
