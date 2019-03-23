@@ -2025,7 +2025,7 @@ def _rhs(t, x,
 
 
     # v=[vbR;vdR;vTL;vTLCd';vE';vD';vC';vA';vR';vRP;vP';vDP';vPA';vXd];
-    v = np.hstack((vbR,vdR,vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd))
+    v = np.hstack((np.array([vbR]),np.array([vdR]),vTL,vTLCd,vE,vD,vC,vA,vR,vRP,vP,vDP,vPA,vXd))
 
 
     v = v[0:2448]
@@ -2035,18 +2035,15 @@ def _rhs(t, x,
     ndot= np.dot(S_PARCDL, v*(VvPARCDL*1E12))
 
 
-    temp = S_PARCDL[772,:]
+    temp =  S_PARCDL[772,:]
 
 
     ydot=ndot/(VxPARCDL*1E12);
 
 
     flag=0;
-    new_data = [];
-
 
     ydot[np.isnan(ydot)] = 0
-
 
     return ydot[0:774]
 
