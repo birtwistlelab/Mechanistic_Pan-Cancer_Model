@@ -25,7 +25,13 @@ class MyProblem(Explicit_Problem):
 
 
     def jac(self,t,x):
-        return self.Jeval774(t,x,self.dataS)
+        data = self.dataS
+        return self.Jeval774(t,x,
+                             k=data.kS,
+                             Vv=np.asarray(data.VvPARCDL).ravel(),
+                             Vx=np.asarray(data.VxPARCDL).ravel(),
+                             mExp=data.mExp_nM.values,
+                             mMod=np.asarray(data.mMod).ravel())
 
 
     #Define the rhs

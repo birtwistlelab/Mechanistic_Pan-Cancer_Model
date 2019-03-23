@@ -1,5 +1,5 @@
 import numpy as np
-
+from numba import jit
 
 # NOTE - if you're wondering why some the indices are like "10-1" instead of "9", that's because this model was originally written in matlab.
 # matlab arrays start at index 1, and every other programming language starts at index 0.
@@ -9,17 +9,11 @@ import numpy as np
 # just wanted to make note of that so that you don't think i'm crazy
 
 
-
-def Jeval774(t,x,data):
+#@jit(cache=True, nopython=True)
+def Jeval774(t,x,k,Vv,Vx,mExp,mMod):
     # function [Je,flag,new_data]=Jeval774[t,x,fy,data]
-
-    flag=0; new_data=[-1];
+    flag=0;
     Je = np.zeros(shape = (775,775))
-    k=data.kS;
-    Vv=data.VvPARCDL;
-    Vx=data.VxPARCDL;
-    mExp=data.mExp_nM;
-    mMod=data.mMod;
     x1=x[0];
     x2=x[1];
     x3=x[2];
