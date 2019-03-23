@@ -8,7 +8,7 @@ from numba import jit
 # changing all the other numbers back didn't make the program any faster, so i decided to just leave the numbers ending in 0-1 like they are
 # just wanted to make note of that so that you don't think i'm crazy
 
-
+@jit(nopython=True, cache=True)
 def Jeval774(t,x,k,Vv,Vx,mExp,mMod):
     # function [Je,flag,new_data]=Jeval774[t,x,fy,data]
     flag=0;

@@ -45,7 +45,7 @@ class MyProblem(Explicit_Problem):
 
         return _rhs(t, x, kS, VvPARCDL, VxPARCDL, S_PARCDL, mExp_nM, mMod, flagE)
 
-#@jit(cache=True, nopython=True)
+@jit(cache=True, nopython=True)
 def _rhs(t, x,
             kS,
             VvPARCDL,
