@@ -9,11 +9,10 @@ from numba import jit
 # just wanted to make note of that so that you don't think i'm crazy
 
 
-#@jit(cache=True, nopython=True)
 def Jeval774(t,x,k,Vv,Vx,mExp,mMod):
     # function [Je,flag,new_data]=Jeval774[t,x,fy,data]
     flag=0;
-    Je = np.zeros(shape = (775,775))
+    Je = np.zeros(shape = (775,775), dtype=np.float64)
     Je[0,0]=-(Vv[1]*k[13])/Vx[0];
     Je[1,1]=-(1000000000000*Vv[143]*np.conj(k[298]) + 1000000000000*Vv[254]*np.conj(k[402]) + 1000000000000*Vv[251]*np.conj(k[401])*np.conj(x[3]) + 1000000000000*Vv[252]*np.conj(k[403])*(np.conj(x[5]**k[404])/(np.conj(k[405]**k[404]) + np.conj(x[5]**k[404])) + np.conj(x[6]**k[404])/(np.conj(k[405]**k[404]) + np.conj(x[6]**k[404]))))/(1000000000000*Vx[1]);
     Je[2,1]=(Vv[252]*np.conj(k[403])*(np.conj(x[5]**k[404])/(np.conj(k[405]**k[404]) + np.conj(x[5]**k[404])) + np.conj(x[6]**k[404])/(np.conj(k[405]**k[404]) + np.conj(x[6]**k[404]))))/Vx[2];
@@ -4476,9 +4475,4 @@ def Jeval774(t,x,k,Vv,Vx,mExp,mMod):
     Je[762,773]=(Vv[246]*np.conj(k[7]))/Vx[762];
     Je[772,773]=(Vv[246]*np.conj(k[7]))/Vx[772];
     Je[773,773]=-(1000000000000*Vv[246]*np.conj(k[7]) + 1000000000000*Vv[250-1]*np.conj(0))/(1000000000000*Vx[773]);
-
-
-
-
-
     return Je
