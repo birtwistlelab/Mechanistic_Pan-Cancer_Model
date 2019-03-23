@@ -98,25 +98,16 @@ def gm(flagD,dataG,ts,xoutG,xoutS):
 
     # make hills
     TFa=(TAs/tck50as)**tcnas;
-
-
-
     TFa[np.isnan(TFa)]=0;
     TFr=(TRs/tck50rs)**tcnrs;
     TFr[np.isnan(TFr)]=0;
     hills = np.sum(TFa,axis=1)/(1 + np.sum(TFa,axis=1) + np.sum(TFr,axis=1))
 
 
-
-
-
-
     # With AP1*cMYC exception:
     # hills(10:12)=(TFa(10:12,1)./      (1+TFa(10:12,1))) .*    (TFa(10:12,2)./(1+TFa(10:12,2)));
     hills[9:12]= np.multiply((TFa[9:12,0]/(1+TFa[9:12,0])),(TFa[9:12,1]/(1+TFa[9:12,1])));
     # so many parenthese :-/
-
-
 
 
     # vTC

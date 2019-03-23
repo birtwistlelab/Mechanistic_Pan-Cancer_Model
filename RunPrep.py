@@ -489,19 +489,15 @@ def RunPrep():
 
 
 
-    kS = []
+    kS = np.array([], dtype=np.float64)
 
     # flattening to put into kS array
     for item in kS_toAdd:
         try:
             for element in item:
-                kS.append(element)
+                kS = np.append(kS, np.asscalar(element))
         except:
-            kS.append(item)
-
-    kS = np.array(kS)
-
-
+            kS= np.append(kS, item)
 
 
 
