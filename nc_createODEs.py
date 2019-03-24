@@ -1,36 +1,26 @@
 # this file adds our system of ODEs to teh Explicit_Problem class in assimulo
-
-
 import numpy as np
 from assimulo.problem import Explicit_Problem
-
-from numba import jit
-
+import scipy.sparse as sp
 
 class MyProblem(Explicit_Problem):
 
-
-    # NOTE - the format of this file is super weird..... basically i had to extend the assimulo Explicit_Problem class and write the ODEs and jacobian matrix straight into it
-    # this is the only way i could get assimulo to work with the dataS object being fed into the ODEs with each iteration
-
-
-
-    def __init__(self, y0,dataS, Jeval774):
+    def __init__(self, y0, dataS, Jeval774):
         Explicit_Problem.__init__(self,y0=y0)
         self.dataS = dataS
         self.Jeval774 = Jeval774
 
     def jac(self,t,x):
         data = self.dataS
-        return self.Jeval774(t,x,
+        jac = self.Jeval774(t,x,
                              k=data.kS,
                              Vv=np.asarray(data.VvPARCDL).ravel(),
                              Vx=np.asarray(data.VxPARCDL).ravel(),
                              mExp=data.mExp_nM.values,
                              mMod=np.asarray(data.mMod).ravel())
+        return sp.csc_matrix(jac)
 
     def rhs(self,t,x):
-
         # returns [ydot,flag,newdata,v]
         data = self.dataS
 
@@ -45,7 +35,6 @@ class MyProblem(Explicit_Problem):
 
         return _rhs(t, x, kS, VvPARCDL, VxPARCDL, S_PARCDL, mExp_nM, mMod, flagE)
 
-@jit(cache=True, nopython=True)
 def _rhs(t, x,
             kS,
             VvPARCDL,

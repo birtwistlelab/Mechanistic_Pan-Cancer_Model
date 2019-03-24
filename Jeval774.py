@@ -1,5 +1,5 @@
 import numpy as np
-from numba import jit
+import scipy.sparse as sp
 
 # NOTE - if you're wondering why some the indices are like "10-1" instead of "9", that's because this model was originally written in matlab.
 # matlab arrays start at index 1, and every other programming language starts at index 0.
@@ -8,7 +8,6 @@ from numba import jit
 # changing all the other numbers back didn't make the program any faster, so i decided to just leave the numbers ending in 0-1 like they are
 # just wanted to make note of that so that you don't think i'm crazy
 
-@jit(nopython=True, cache=True)
 def Jeval774(t,x,k,Vv,Vx,mExp,mMod):
     # function [Je,flag,new_data]=Jeval774[t,x,fy,data]
     flag=0;
