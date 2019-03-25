@@ -3,11 +3,7 @@ import sys
 # from RunPrep import *
 import csv
 
-from numba import jit, njit
-
 from scipy.integrate import odeint
-
-
 
 # NOTE - this file is just used for debugging the ODEs, and is not actually called by the model (which calls nc_createODEs.py)
 

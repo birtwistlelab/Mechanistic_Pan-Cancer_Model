@@ -12,6 +12,38 @@ from PARCDL_compartments import *
 
 # This script loads and calculates many of the intial parameters needed to
 # run the model.
+class dataS:
+        def __init__(self, ts, x0PARCDL, kS, VvPARCDL, VxPARCDL, S_PARCDL, mExp_nM, pExp_nM, flagE):
+            self.ts=ts; #time step
+            self.x0PARCDL=x0PARCDL;
+            self.kS=kS;
+            self.VvPARCDL=VvPARCDL;
+            self.VxPARCDL=VxPARCDL;
+            self.S_PARCDL=S_PARCDL;
+            self.mExp_nM=mExp_nM;
+            self.mMod=mExp_nM;
+            self.pExp_nM=pExp_nM;
+            self.flagE=flagE;
+
+class dataG:
+    def __init__(self, x0gm_mpc, x0gm_mpc_D, kGin, kGac, kTCleak, kTCmaxs, kTCd, tcnas, tcnrs, tck50as, tck50rs, GenePositionMatrix, AllGenesVec, Vn, indsD):
+        self.x0gm_mpc=x0gm_mpc;
+        self.x0gm_mpc_D=x0gm_mpc_D;
+        self.kGin=kGin;
+        self.kGac=kGac;
+        self.kTCleak=kTCleak;
+        self.kTCmaxs=kTCmaxs;
+        self.kTCd=kTCd;
+        self.tcnas=tcnas;
+        self.tcnrs=tcnrs;
+        self.tck50as=tck50as;
+        self.tck50rs=tck50rs;
+        self.GenePositionMatrix=GenePositionMatrix;
+        self.AllGenesVec=AllGenesVec;
+        self.Vn=Vn;
+        self.indsD=indsD;
+
+
 
 
 def RunPrep():
@@ -457,43 +489,26 @@ def RunPrep():
 
 
 
-    kS = []
+    kS = np.array([], dtype=np.float64)
 
     # flattening to put into kS array
     for item in kS_toAdd:
         try:
             for element in item:
-                kS.append(element)
+                kS = np.append(kS, np.asscalar(element))
         except:
-            kS.append(item)
-
-    kS = np.array(kS)
-
-
+            kS= np.append(kS, item)
 
 
 
 
     flagE = 1
-    class dataS:
-        def __init__(self, ts, x0PARCDL, kS, VvPARCDL, VxPARCDL, S_PARCDL, mExp_nM, pExp_nM, flagE):
-            self.ts=ts; #time step
-            self.x0PARCDL=x0PARCDL;
-            self.kS=kS;
-            self.VvPARCDL=VvPARCDL;
-            self.VxPARCDL=VxPARCDL;
-            self.S_PARCDL=S_PARCDL;
-            self.mExp_nM=mExp_nM;
-            self.mMod=mExp_nM;
-            self.pExp_nM=pExp_nM;
-            self.flagE=flagE;
-
-
+    
 
 
 
     del S_PARCDL[0]
-    S_PARCDL = np.matrix(S_PARCDL)
+    S_PARCDL = np.matrix(S_PARCDL, dtype=np.float64)
     # need to format S_PARCDL correctly before putting it into dataS object
 
 
@@ -549,25 +564,6 @@ def RunPrep():
     kTCleak = kTCleak.as_matrix()
     kTCleak = np.matrix(kTCleak)
     kTCleak = np.matrix.transpose(kTCleak)
-
-    class dataG:
-        def __init__(self, x0gm_mpc, x0gm_mpc_D, kGin, kGac, kTCleak, kTCmaxs, kTCd, tcnas, tcnrs, tck50as, tck50rs, GenePositionMatrix, AllGenesVec, Vn, indsD):
-            self.x0gm_mpc=x0gm_mpc;
-            self.x0gm_mpc_D=x0gm_mpc_D;
-            self.kGin=kGin;
-            self.kGac=kGac;
-            self.kTCleak=kTCleak;
-            self.kTCmaxs=kTCmaxs;
-            self.kTCd=kTCd;
-            self.tcnas=tcnas;
-            self.tcnrs=tcnrs;
-            self.tck50as=tck50as;
-            self.tck50rs=tck50rs;
-            self.GenePositionMatrix=GenePositionMatrix;
-            self.AllGenesVec=AllGenesVec;
-            self.Vn=Vn;
-            self.indsD=indsD;
-
     dataG_struct = dataG(new_x0gm_mpc, new_x0gm_mpc_D, kGin, kGac, kTCleak, kTCmaxs, kTCd, tcnas, tcnrs, tck50as, tck50rs, GenePositionMatrix, AllGenesVec, Vn, np.array(indsD))
     # this is the second object that will be returned
 

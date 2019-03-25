@@ -12,9 +12,9 @@ from Jeval774 import Jeval774
 from assimulo.solvers import CVode
 from assimulo.problem import Explicit_Problem
 
+import sys
 
-
-np.set_printoptions(threshold=np.nan)
+np.set_printoptions(threshold=sys.maxsize)
 
 
 
@@ -206,21 +206,16 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
         xoutG = np.matrix.transpose(np.matrix(xoutG))
 
 
-
-
         dataS.mMod=xmN*(1E9/(Vc*6.023E+23)); #convert mRNAs from mpc to nM
         dataG.AllGenesVec=AllGenesVecN;
 
 
         xoutG_all[i,:] = np.matrix.transpose(xoutG)
 
-
         try:
             xoutS_all[i,:] = np.squeeze(np.asarray(xoutS))
         except:
             xoutS_all[i,:] = np.squeeze(np.asarray(xoutS[1]))
-
-
 
 
         if xoutS[0,103]<xoutS[0,105]:
@@ -236,14 +231,16 @@ def RunModel(flagD,th,STIM,xoutS,xoutG,dataS,dataG,kTCleak,kTCmaxs, inds_to_watc
         # xoutS = odeint(createODEs, xoutS_all[i,:],np.array([ts_up-ts, ts_up]), args=(dataS.kS,dataS.VvPARCDL,dataS.VxPARCDL,dataS.S_PARCDL,dataS.mExp_nM.as_matrix(),dataS.mMod,dataS.flagE))
 
 
-        # assimulo -- much faster
+        # assimulo -- much faste
         ode_start_time = time.time()
-        exp_mod = MyProblem(y0=xoutS_all[i,:],dataS=dataS, Jeval774 = Jeval774)
-        exp_sim = CVode(exp_mod)
 
-        exp_sim.verbosity=50
+        if i == 0:
+            exp_mod = MyProblem(y0=xoutS_all[i,:], dataS=dataS, Jeval774 = Jeval774)
+            exp_sim = CVode(exp_mod)
 
-        exp_sim.re_init(ts_up-ts,xoutS_all[i,:] )
+            exp_sim.verbosity=50
+        else:
+            exp_sim.re_init(ts_up-ts,xoutS_all[i,:] )
         t1, xoutS = exp_sim.simulate(ts_up, 1)
 
 

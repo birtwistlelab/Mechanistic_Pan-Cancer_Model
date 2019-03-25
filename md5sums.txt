@@ -1,0 +1,3 @@
+MD5 (t_deterministic.csv) = 273c2b66a5d28c15b193492ea5bc34cb
+MD5 (xoutG_deterministic.csv) = 52ce9a7c76146d02c89fb822198f8f83
+MD5 (xoutS_deterministic.csv) = 430676d4621ea444669598fff692fbbb

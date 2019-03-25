@@ -8,7 +8,7 @@ from RunPrep import *
 from RunModel import *
 
 
-np.set_printoptions(threshold=np.nan)
+np.set_printoptions(threshold=sys.maxsize)
 
 
 

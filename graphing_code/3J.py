@@ -8,7 +8,7 @@ from RunModel import *
 from matplotlib.font_manager import FontProperties
 
 
-np.set_printoptions(threshold=np.nan)
+np.set_printoptions(threshold=sys.maxsize)
 
 
 # read in files
