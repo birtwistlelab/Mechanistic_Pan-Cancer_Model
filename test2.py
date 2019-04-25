@@ -6,11 +6,12 @@ import os
 from random import randint
 from RunPrep import *
 from RunModel import *
+import sys
 
 
 np.set_printoptions(threshold=np.nan)
 cdir = os.getcwd()
-ext = str(randint(1,10000))		#will likely be fixed with command line args in future versions
+ext = str(sys.argv[1])		#will likely be fixed with command line args in future versions
 ndir = cdir + "/op/"+ext
 os.makedirs(ndir,exist_ok=True)
 
